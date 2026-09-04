@@ -1,0 +1,636 @@
+{
+ "usuarios": [
+  {
+   "usuario": "arzuaga",
+   "nombre": "Alejo Arzuaga",
+   "rol": "director",
+   "cargo": "Director de Inspección Laboral"
+  },
+  {
+   "usuario": "mosconi",
+   "nombre": "Mariano Mosconi",
+   "rol": "director",
+   "cargo": "Subdirector de Inspección Laboral"
+  },
+  {
+   "usuario": "cnunez",
+   "nombre": "Carla Núñez",
+   "rol": "admin",
+   "cargo": "Administrativa",
+   "inspectores": [
+    "0367",
+    "0369",
+    "0370",
+    "0373",
+    "0377",
+    "0378"
+   ]
+  },
+  {
+   "usuario": "mibanez",
+   "nombre": "Marcos Ibáñez",
+   "rol": "admin",
+   "cargo": "Administrativo",
+   "inspectores": [
+    "0391",
+    "0400",
+    "0401",
+    "0403",
+    "0440",
+    "0456"
+   ]
+  },
+  {
+   "usuario": "squiroga",
+   "nombre": "Sofía Quiroga",
+   "rol": "admin",
+   "cargo": "Administrativa",
+   "inspectores": [
+    "0469",
+    "0472",
+    "0482",
+    "0508",
+    "0556",
+    "0608"
+   ]
+  },
+  {
+   "usuario": "therrera",
+   "nombre": "Tomás Herrera",
+   "rol": "admin",
+   "cargo": "Administrativo",
+   "inspectores": [
+    "0626",
+    "0640",
+    "0703",
+    "0704",
+    "0714",
+    "0718"
+   ]
+  }
+ ],
+ "inspectores": [
+  {
+   "codigo": "0367",
+   "nombre": "RODRIGUEZ FRANCISCA ALBINA",
+   "legajo": "311804"
+  },
+  {
+   "codigo": "0369",
+   "nombre": "DE BLASI ROBERTO",
+   "legajo": "316145"
+  },
+  {
+   "codigo": "0370",
+   "nombre": "LEDESMA POMPEYA BEATRIZ",
+   "legajo": "260544"
+  },
+  {
+   "codigo": "0373",
+   "nombre": "FADON JUAN PABLO",
+   "legajo": "304433"
+  },
+  {
+   "codigo": "0377",
+   "nombre": "NIETO LUIS RAFAEL",
+   "legajo": "258377"
+  },
+  {
+   "codigo": "0378",
+   "nombre": "HUCEDO VELOSO ELENA MABEL",
+   "legajo": "299583"
+  },
+  {
+   "codigo": "0391",
+   "nombre": "MALCUN JUAN DOMINGO",
+   "legajo": "297278"
+  },
+  {
+   "codigo": "0400",
+   "nombre": "DICUNZOLO ANALIA RUTH",
+   "legajo": "316141"
+  },
+  {
+   "codigo": "0401",
+   "nombre": "ASCONIGA MARCELA ANDREA",
+   "legajo": "316136"
+  },
+  {
+   "codigo": "0403",
+   "nombre": "MORENO MARIANO PABLO",
+   "legajo": "340060"
+  },
+  {
+   "codigo": "0440",
+   "nombre": "BARRETO GABRIEL ELISANDRO",
+   "legajo": "338968"
+  },
+  {
+   "codigo": "0456",
+   "nombre": "PAVISKOV DAMIAN OSCAR",
+   "legajo": "801240"
+  },
+  {
+   "codigo": "0469",
+   "nombre": "CASTILLO MARIA ALEJANDRA",
+   "legajo": "261019"
+  },
+  {
+   "codigo": "0472",
+   "nombre": "MORENA JUAN MANUEL",
+   "legajo": "900211"
+  },
+  {
+   "codigo": "0482",
+   "nombre": "BENITEZ LIDIA BEATRIZ",
+   "legajo": "601547"
+  },
+  {
+   "codigo": "0508",
+   "nombre": "PODASCHEVSKY NICOLAS CARLOS",
+   "legajo": "601569"
+  },
+  {
+   "codigo": "0556",
+   "nombre": "BRITOS DAMIAN ADALBERTO",
+   "legajo": "443552"
+  },
+  {
+   "codigo": "0608",
+   "nombre": "GARAY CINTIA LETICIA",
+   "legajo": "443536"
+  },
+  {
+   "codigo": "0626",
+   "nombre": "TOUCEDA HERNAN DIEGO",
+   "legajo": "443547"
+  },
+  {
+   "codigo": "0640",
+   "nombre": "GONZALEZ SILVINA ALEJANDRA",
+   "legajo": "601730"
+  },
+  {
+   "codigo": "0703",
+   "nombre": "D'ELIA JULIO CESAR",
+   "legajo": "601007"
+  },
+  {
+   "codigo": "0704",
+   "nombre": "LOMBARDO GUILLERMO TOMAS",
+   "legajo": "602487"
+  },
+  {
+   "codigo": "0714",
+   "nombre": "ARZUAGA JUAN MANUEL",
+   "legajo": "602347"
+  },
+  {
+   "codigo": "0718",
+   "nombre": "FLORES ASSET ROCIO SOLEDAD",
+   "legajo": "602681"
+  }
+ ],
+ "causales": [
+  {
+   "id": 1,
+   "nombre": "Sujeto mal individualizado",
+   "controla": "Que la razón social y el CUIT correspondan al empleador real del personal relevado y coincidan entre sí.",
+   "aparte": false
+  },
+  {
+   "id": 2,
+   "nombre": "Problemas con la Orden de Inspección",
+   "controla": "Si la actuación excede la orden (plazo, domicilio, materia). Si hay correspondencia entre la orden de inspección y la actuación.",
+   "aparte": false
+  },
+  {
+   "id": 3,
+   "nombre": "Error en la Constancia de Inspección",
+   "controla": "Que se haya dejado Constancia de Inspección, que consigne las actas labradas y la orden, y que el administrado haya podido conocer la imputación.",
+   "aparte": false
+  },
+  {
+   "id": 4,
+   "nombre": "Error en la descripción del hecho",
+   "controla": "Que el acta describa una conducta y no sólo cite la norma. Se distingue de la descripción no autosuficiente en la extensión: acá no queda nada en pie.",
+   "aparte": false
+  },
+  {
+   "id": 5,
+   "nombre": "Descripción no autosuficiente",
+   "controla": "Que la conducta reprochable se entienda leyendo sólo el acta, sin remitir a otra pieza.",
+   "aparte": false
+  },
+  {
+   "id": 6,
+   "nombre": "Error de encuadre normativo",
+   "controla": "Que la conducta esté referida a la norma infringida y que encuadre en alguna infracción tipificada.",
+   "aparte": false
+  },
+  {
+   "id": 7,
+   "nombre": "Error con el personal total o afectado",
+   "controla": "Que el personal afectado esté determinado: sin ese dato la multa de una infracción grave o muy grave no se puede calcular.",
+   "aparte": false
+  },
+  {
+   "id": 8,
+   "nombre": "Error en la redacción de la obstrucción",
+   "controla": "Los seis contenidos del art. 39: intimación a cesar y negativa, conducta, lugar, circunstancias, persona que obstruyó, datos del empleador.",
+   "aparte": false
+  },
+  {
+   "id": 9,
+   "nombre": "Incoherencia aritmética entre estados del mismo punto",
+   "controla": "Que la suma del personal afectado en los distintos estados no supere el total de trabajadores.",
+   "aparte": false
+  },
+  {
+   "id": 10,
+   "nombre": "Error en el relevamiento",
+   "controla": "Que la nómina traiga los datos que son presupuesto del punto imputado (ingreso, jornada, tarea, categoría) y no referencias vagas.",
+   "aparte": false
+  },
+  {
+   "id": 11,
+   "nombre": "Errores de convenio",
+   "controla": "Que se identifique el convenio aplicable y que corresponda a la actividad del establecimiento y a la categoría del trabajador.",
+   "aparte": false
+  },
+  {
+   "id": 12,
+   "nombre": "Errores en la intimación",
+   "controla": "En obligaciones meramente formales o documentales: intimación previa de al menos 5 días hábiles. La infracción directa es la excepción y debe fundarse en el acta. Que se intimen puntos que correspondan",
+   "aparte": false
+  },
+  {
+   "id": 13,
+   "nombre": "Ausencia de elementos del acta",
+   "controla": "Actividad, cantidad de personal ocupado en el lugar, datos del receptor.",
+   "aparte": false
+  },
+  {
+   "id": 14,
+   "nombre": "Uso indebido de informe",
+   "controla": "Informe que relata incumplimientos sin que el acta intime ni infraccione.",
+   "aparte": false
+  },
+  {
+   "id": 15,
+   "nombre": "Falta de constancia de la presencia gremial",
+   "controla": "Cuando intervino representación gremial, que quede constancia en el acta.",
+   "aparte": false
+  },
+  {
+   "id": 16,
+   "nombre": "Error al seleccionar el tipo de informe",
+   "controla": "Error de criterio: se eligió un tipo de informe real pero no el que corresponde al hecho constatado.",
+   "aparte": false
+  },
+  {
+   "id": 17,
+   "nombre": "Categoría elegida que no es un tipo de informe",
+   "controla": "Se cargó una categoría que no es un tipo de acta informe. Es un problema de la lista de opciones del RAI, no de criterio: se registra aparte.",
+   "aparte": true
+  }
+ ],
+ "supuestos": [
+  {
+   "id": 1,
+   "causalId": 1,
+   "nombre": "Falta CUIT",
+   "activo": true
+  },
+  {
+   "id": 2,
+   "causalId": 1,
+   "nombre": "Falta razón social",
+   "activo": true
+  },
+  {
+   "id": 3,
+   "causalId": 1,
+   "nombre": "Domicilio erróneo o mal escrito",
+   "activo": true
+  },
+  {
+   "id": 4,
+   "causalId": 1,
+   "nombre": "El CUIT y la razón social no se corresponden entre sí",
+   "activo": true
+  },
+  {
+   "id": 5,
+   "causalId": 2,
+   "nombre": "Actuación fuera del domicilio o de la zona geográfica delimitada",
+   "activo": true
+  },
+  {
+   "id": 6,
+   "causalId": 2,
+   "nombre": "Actuación realizada a una persona distinta a la indicada en la orden",
+   "activo": true
+  },
+  {
+   "id": 7,
+   "causalId": 3,
+   "nombre": "No se dejó Constancia de Inspección",
+   "activo": true
+  },
+  {
+   "id": 8,
+   "causalId": 3,
+   "nombre": "La Constancia no consigna las actas labradas ni la orden de inspección",
+   "activo": true
+  },
+  {
+   "id": 9,
+   "causalId": 3,
+   "nombre": "Constancia mal confeccionada: el administrado no pudo conocer la imputación",
+   "activo": true
+  },
+  {
+   "id": 10,
+   "causalId": 4,
+   "nombre": "El acta cita la norma presuntamente infringida pero no describe hecho alguno",
+   "activo": true
+  },
+  {
+   "id": 11,
+   "causalId": 4,
+   "nombre": "La descripción es de tal generalidad que no permite conocer la conducta imputada",
+   "activo": true
+  },
+  {
+   "id": 12,
+   "causalId": 5,
+   "nombre": "Reproduce el texto predefinido del punto sin precisar la circunstancia concreta",
+   "activo": true
+  },
+  {
+   "id": 13,
+   "causalId": 5,
+   "nombre": "Fórmula sin contenido fáctico (\"no da cumplimiento a la normativa vigente\")",
+   "activo": true
+  },
+  {
+   "id": 14,
+   "causalId": 5,
+   "nombre": "Descripción derivada a otro documento (\"ver informe adjunto\")",
+   "activo": true
+  },
+  {
+   "id": 15,
+   "causalId": 5,
+   "nombre": "Punto marcado \"presenta defectuoso\" sin decir en qué consiste el defecto",
+   "activo": true
+  },
+  {
+   "id": 16,
+   "causalId": 5,
+   "nombre": "Punto marcado \"no presenta\" con texto agregado que contradice la imputación",
+   "activo": true
+  },
+  {
+   "id": 17,
+   "causalId": 6,
+   "nombre": "Sin cita normativa concreta (norma, artículo e inciso)",
+   "activo": true
+  },
+  {
+   "id": 18,
+   "causalId": 6,
+   "nombre": "Norma citada inexistente, no vigente o inaplicable al caso",
+   "activo": true
+  },
+  {
+   "id": 19,
+   "causalId": 6,
+   "nombre": "Encuadre que no corresponde a los hechos descriptos",
+   "activo": true
+  },
+  {
+   "id": 20,
+   "causalId": 6,
+   "nombre": "Conducta que no encuadra en ninguna infracción tipificada",
+   "activo": true
+  },
+  {
+   "id": 21,
+   "causalId": 7,
+   "nombre": "El punto imputado no consigna personal afectado",
+   "activo": true
+  },
+  {
+   "id": 22,
+   "causalId": 7,
+   "nombre": "Personal afectado que excede a los trabajadores efectivamente relevados, en puntos de recibos de sueldo",
+   "activo": true
+  },
+  {
+   "id": 23,
+   "causalId": 8,
+   "nombre": "No consta la intimación previa a cesar, ni la negativa",
+   "activo": true
+  },
+  {
+   "id": 24,
+   "causalId": 8,
+   "nombre": "No se individualiza a la persona que impidió, perturbó o retrasó la diligencia",
+   "activo": true
+  },
+  {
+   "id": 25,
+   "causalId": 8,
+   "nombre": "La descripción de la conducta obstructiva se deriva a un informe separado",
+   "activo": true
+  },
+  {
+   "id": 26,
+   "causalId": 8,
+   "nombre": "Obstrucción imputada sin ninguna persona presente en el establecimiento",
+   "activo": true
+  },
+  {
+   "id": 27,
+   "causalId": 8,
+   "nombre": "Se indica como total de trabajadores 0",
+   "activo": true
+  },
+  {
+   "id": 28,
+   "causalId": 8,
+   "nombre": "Se indicó un número de trabajadores mayor a uno sin justificar de dónde se observó dicho número",
+   "activo": true
+  },
+  {
+   "id": 29,
+   "causalId": 8,
+   "nombre": "No consta el lugar inspeccionado o las circunstancias en que se produjo",
+   "activo": true
+  },
+  {
+   "id": 30,
+   "causalId": 9,
+   "nombre": "La suma del personal afectado en los distintos estados supera el total de trabajadores",
+   "activo": true
+  },
+  {
+   "id": 31,
+   "causalId": 9,
+   "nombre": "Las cifras se solapan: los mismos trabajadores se cuentan dos veces",
+   "activo": true
+  },
+  {
+   "id": 32,
+   "causalId": 10,
+   "nombre": "La nómina no trae el dato que es presupuesto del punto (ingreso, jornada, tarea, categoría, horas nocturnas, horas extra, feriado)",
+   "activo": true
+  },
+  {
+   "id": 33,
+   "causalId": 10,
+   "nombre": "Referencia vaga en lugar de un dato (\"hace unos meses\")",
+   "activo": true
+  },
+  {
+   "id": 34,
+   "causalId": 10,
+   "nombre": "Se imputa una irregularidad registral o convencional sobre un dato que no fue relevado",
+   "activo": true
+  },
+  {
+   "id": 35,
+   "causalId": 11,
+   "nombre": "No se identifica el convenio colectivo aplicable",
+   "activo": true
+  },
+  {
+   "id": 36,
+   "causalId": 11,
+   "nombre": "Se aplica un convenio que no corresponde a la actividad del establecimiento",
+   "activo": true
+  },
+  {
+   "id": 37,
+   "causalId": 11,
+   "nombre": "Se aplica un convenio que no corresponde a la categoría del trabajador",
+   "activo": true
+  },
+  {
+   "id": 38,
+   "causalId": 12,
+   "nombre": "Punto documental infraccionado sin intimación previa",
+   "activo": true
+  },
+  {
+   "id": 39,
+   "causalId": 12,
+   "nombre": "Intimo puntos que no corresponden",
+   "activo": true
+  },
+  {
+   "id": 40,
+   "causalId": 12,
+   "nombre": "Intimación documental con plazo menor a 5 días hábiles",
+   "activo": true
+  },
+  {
+   "id": 41,
+   "causalId": 12,
+   "nombre": "Sin intimación previa y sin que el acta funde el supuesto excepcional",
+   "activo": true
+  },
+  {
+   "id": 42,
+   "causalId": 12,
+   "nombre": "La verificación se practicó antes de vencido el plazo de la intimación",
+   "activo": true
+  },
+  {
+   "id": 43,
+   "causalId": 13,
+   "nombre": "Falta la actividad desarrollada en el establecimiento",
+   "activo": true
+  },
+  {
+   "id": 44,
+   "causalId": 13,
+   "nombre": "Falta la cantidad de personal ocupado en el lugar",
+   "activo": true
+  },
+  {
+   "id": 45,
+   "causalId": 13,
+   "nombre": "Faltan los datos del receptor del acta",
+   "activo": true
+  },
+  {
+   "id": 46,
+   "causalId": 14,
+   "nombre": "Relata incumplimientos sin que el acta intime ni infraccione",
+   "activo": true
+  },
+  {
+   "id": 47,
+   "causalId": 14,
+   "nombre": "Manifiesta mediante informe cuestiones improcedentes",
+   "activo": true
+  },
+  {
+   "id": 48,
+   "causalId": 15,
+   "nombre": "Intervino representación gremial y no quedó constancia en el acta",
+   "activo": true
+  },
+  {
+   "id": 49,
+   "causalId": 16,
+   "nombre": "Cerrado temporalmente cuando hay prueba de cese definitivo (era permanente)",
+   "activo": true
+  },
+  {
+   "id": 50,
+   "causalId": 16,
+   "nombre": "Cerrado permanentemente cuando la actividad sigue viva (era temporal)",
+   "activo": true
+  },
+  {
+   "id": 51,
+   "causalId": 16,
+   "nombre": "Sin personal al momento de la inspección sin que nadie haya atendido (era cerrado temporal)",
+   "activo": true
+  },
+  {
+   "id": 52,
+   "causalId": 16,
+   "nombre": "Domicilio deficiente cuando el lugar se ubicó y el sujeto no opera ahí (era cerrado permanente)",
+   "activo": true
+  },
+  {
+   "id": 53,
+   "causalId": 16,
+   "nombre": "Informe técnico usado para una visita frustrada",
+   "activo": true
+  },
+  {
+   "id": 54,
+   "causalId": 16,
+   "nombre": "Complementario de relevamiento sin acta previa en la que apoyarse",
+   "activo": true
+  },
+  {
+   "id": 55,
+   "causalId": 17,
+   "nombre": "Se cargó \"INFORMES\" genérico",
+   "activo": true
+  },
+  {
+   "id": 56,
+   "causalId": 17,
+   "nombre": "Se cargó \"LABORAL\"",
+   "activo": true
+  }
+ ]
+}
