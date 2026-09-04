@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control de Actas · Inspección del Trabajo PBA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0F2240;--navy-2:#16305A;--teal:#0EA5B7;--teal-2:#0B8797;--teal-soft:#E0F5F8;
+  --bg:#F4F6F9;--card:#FFFFFF;--line:#E3E8EF;--line-2:#CBD3DE;
+  --ink:#172033;--ink-2:#3B4658;--muted:#6B7A90;
+  --ok:#1B8A5A;--ok-soft:#E3F4EB;--warn:#C7811A;--warn-soft:#FBF0DE;--bad:#B4362E;--bad-soft:#F9E5E3;--info:#3057B8;--info-soft:#E6ECFA;
+  --r:12px;--r-s:8px;--sh:0 1px 2px rgba(23,32,51,.06),0 4px 16px -8px rgba(23,32,51,.10);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--teal-2);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
+/* ===== Login ===== */
+#login{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.lg-brand{background:var(--navy);color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.lg-brand::before{content:"";position:absolute;right:-160px;top:-120px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(14,165,183,.55),rgba(14,165,183,0) 62%)}
+.lg-brand::after{content:"";position:absolute;left:-80px;bottom:-200px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(255,255,255,.12)}
+.lg-brand h1{font-size:42px;font-weight:800;line-height:1.08;letter-spacing:-.02em;max-width:420px;position:relative}
+.lg-brand p{color:rgba(255,255,255,.72);max-width:420px;margin-top:18px;font-size:16px;position:relative}
+.lg-brand .foot{font-size:13px;color:rgba(255,255,255,.55);position:relative}
+.lg-form{display:grid;place-items:center;padding:40px}
+.lg-box{width:100%;max-width:380px}
+.lg-box h2{font-size:24px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.lg-box .sub{margin-bottom:28px}
+.logo{display:flex;align-items:center;gap:12px;position:relative}
+.logo .mk{width:40px;height:40px;border-radius:10px;background:var(--teal);display:grid;place-items:center;flex:none}
+.logo .mk svg{width:22px;height:22px}
+.logo b{display:block;font-size:15px;font-weight:700;line-height:1.15}
+.logo small{display:block;font-size:12px;opacity:.7;line-height:1.15}
+.err{color:var(--bad);font-size:13px;min-height:20px;margin:-6px 0 8px}
+.demo{margin-top:22px;padding:12px 14px;background:var(--teal-soft);border-radius:var(--r-s);font-size:13px;color:var(--teal-2)}
+
+/* ===== Shell ===== */
+#app{display:none;min-height:100vh;grid-template-columns:248px 1fr}
+aside{background:var(--navy);color:#fff;padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside .logo{padding:0 8px 22px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:14px}
+aside nav{display:flex;flex-direction:column;gap:2px;flex:1}
+aside nav .grp{font-size:11px;font-weight:600;letter-spacing:.06em;color:rgba(255,255,255,.4);padding:14px 12px 6px}
+aside nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;padding:10px 12px;border-radius:9px;color:rgba(255,255,255,.78);font-weight:500;font-size:14px}
+aside nav button svg{width:18px;height:18px;flex:none;opacity:.8}
+aside nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+aside nav button.on{background:rgba(14,165,183,.18);color:#fff}
+aside nav button.on svg{opacity:1;color:var(--teal)}
+aside nav button .n{margin-left:auto;background:var(--teal);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;padding:0 6px;border-radius:10px;display:grid;place-items:center}
+.me{display:flex;align-items:center;gap:10px;padding:12px 8px 0;border-top:1px solid rgba(255,255,255,.1);margin-top:10px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--teal-soft);color:var(--teal-2);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.me>div{min-width:0}.me b{display:block;font-size:13px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.me small{display:block;font-size:11.5px;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me .ic{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.6);padding:6px;border-radius:6px}
+.me .ic:hover{background:rgba(255,255,255,.1);color:#fff}
+main{padding:32px 40px 60px;max-width:1240px;width:100%}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.ph h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.ph p{color:var(--muted);margin-top:4px;max-width:720px}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;background:none;border:0;padding:0;margin-bottom:10px}
+.back:hover{color:var(--ink)}
+
+/* ===== Blocks ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h3 .cnt{font-weight:600;color:var(--muted);font-size:13px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g23{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.f input,.f select,.f textarea,.in{width:100%;padding:10px 12px;border:1px solid var(--line-2);border-radius:var(--r-s);background:#fff;transition:border-color .15s,box-shadow .15s}
+.f input:focus,.f select:focus,.f textarea:focus,.in:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,165,183,.15);outline:none}
+.f input[readonly]{background:var(--bg);color:var(--ink-2)}
+.f textarea{min-height:88px;resize:vertical}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--teal);background:var(--teal);color:#fff;padding:10px 16px;border-radius:var(--r-s);font-weight:600;font-size:14px;transition:background .15s,transform .05s;white-space:nowrap}
+.btn:hover{background:var(--teal-2);border-color:var(--teal-2);text-decoration:none}
+.btn:active{transform:translateY(1px)}
+.btn.sec{background:#fff;color:var(--ink);border-color:var(--line-2)}
+.btn.sec:hover{background:var(--bg)}
+.btn.ghost{background:transparent;color:var(--teal-2);border-color:transparent}
+.btn.ghost:hover{background:var(--teal-soft)}
+.btn.ok{background:var(--ok);border-color:var(--ok)}.btn.ok:hover{background:#166f49}
+.btn.bad{background:var(--bad);border-color:var(--bad)}.btn.bad:hover{background:#932c25}
+.btn.bad.o{background:#fff;color:var(--bad)}.btn.bad.o:hover{background:var(--bad-soft)}
+.btn.ok.o{background:#fff;color:var(--ok)}.btn.ok.o:hover{background:var(--ok-soft)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:7px}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn svg{width:16px;height:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em;padding:0 12px 10px;border-bottom:1px solid var(--line)}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FAFBFC}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.info{background:var(--info-soft);color:var(--info)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.mut{background:#EEF1F5;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh)}
+.kpi b{display:block;font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.kpi span{font-size:12.5px;color:var(--muted);font-weight:500}
+.kpi.hi b{color:var(--teal-2)}
+.bar{height:6px;background:#EEF1F5;border-radius:3px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--teal);border-radius:3px}
+.empty{color:var(--muted);padding:36px 20px;text-align:center;border:1px dashed var(--line-2);border-radius:var(--r);background:#fff}
+.empty b{display:block;color:var(--ink);font-weight:600;margin-bottom:4px}
+.acta-h{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px}
+.acta-h .nro{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.acta-h .meta{font-size:13px;color:var(--muted);margin-top:2px}
+.cs{font-size:12px;color:var(--muted);font-weight:600}
+.err-item{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.err-item:first-child{border-top:0}
+.err-item .pt{font-weight:700;font-size:13px}.err-item .pt small{display:block;font-weight:500;color:var(--muted)}
+.err-item .dt{font-size:12.5px;color:var(--muted);margin-top:2px}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:var(--r-s);overflow:hidden}
+.seg button{background:#fff;border:0;padding:7px 12px;font-size:13px;font-weight:600;color:var(--muted);border-right:1px solid var(--line-2)}
+.seg button:last-child{border-right:0}
+.seg button.ok{background:var(--ok);color:#fff}.seg button.bad{background:var(--bad);color:#fff}
+.seg button:hover:not(.ok):not(.bad){background:var(--bg)}
+.drop{border:2px dashed var(--line-2);border-radius:var(--r);padding:26px;text-align:center;color:var(--muted);transition:.15s;background:#fff}
+.drop.over{border-color:var(--teal);background:var(--teal-soft);color:var(--teal-2)}
+.drop b{display:block;color:var(--ink);font-weight:600}
+.drop input{display:none}
+.det{background:var(--bg);border-radius:var(--r-s);padding:14px 16px;font-size:13.5px}
+.det dl{display:grid;grid-template-columns:120px 1fr;gap:4px 12px}.det dt{color:var(--muted);font-weight:500}.det dd{font-weight:500}
+.puntos{max-height:380px;overflow:auto;border:1px solid var(--line);border-radius:var(--r-s)}
+.pu{display:flex;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.pu:last-child{border-bottom:0}.pu:hover{background:var(--teal-soft)}.pu.sel{background:var(--teal-soft);box-shadow:inset 3px 0 0 var(--teal)}
+.pu .n{font-weight:700;color:var(--teal-2);min-width:26px}.pu .s{color:var(--muted);font-size:11px;margin-left:auto;white-space:nowrap}
+.pu .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--muted);padding:8px 12px 4px;background:var(--bg);position:sticky;top:0}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.icard{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--sh);display:flex;gap:12px;align-items:center;transition:transform .1s,border-color .15s}
+.icard:hover{transform:translateY(-1px);border-color:var(--line-2)}
+.icard.alert{border-color:var(--warn);background:linear-gradient(0deg,#fff,#FFFBF4)}
+.icard .av{width:42px;height:42px;font-size:14px}
+.icard.alert .av{background:var(--warn-soft);color:var(--warn)}
+.icard b{display:block;font-size:14px;font-weight:700;line-height:1.2}.icard small{display:block;font-size:12px;color:var(--muted)}
+.icard .pd{margin-top:5px;font-size:12.5px;font-weight:600;color:var(--warn)}.icard .pd.ok{color:var(--ok)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line-2);background:#fff;padding:5px 12px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;user-select:none}
+.chip input{display:none}.chip.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+.catlist li{list-style:none;display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.catlist li:first-child{border-top:0}.catlist li.off input{color:var(--muted);text-decoration:line-through}
+.catlist input{flex:1}
+.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,10px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:.2s;z-index:9;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.tl{display:flex;gap:6px;align-items:flex-end;height:180px;padding-top:8px}
+.tlc{flex:1;min-width:40px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.tlb{width:60%;background:var(--teal);border-radius:4px 4px 0 0;min-height:3px}
+.tlv{font-size:12px;font-weight:700;margin:5px 0 1px}.tlm{font-size:11.5px;color:var(--muted)}.tla{font-size:11px;color:var(--muted)}
+.filters{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}.filters .in{width:auto;min-width:200px}
+details.cat{border:1px solid var(--line);border-radius:var(--r-s);margin-bottom:10px;background:#fff}
+details.cat summary{list-style:none;cursor:pointer;padding:12px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.cat summary::-webkit-details-marker{display:none}
+details.cat[open] summary{border-bottom:1px solid var(--line)}
+details.cat .body{padding:14px 16px}
+
+.side-search{margin:0 0 10px;position:relative}.side-search input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;padding:9px 12px 9px 34px;border-radius:9px;font-size:13px}
+.side-search input::placeholder{color:rgba(255,255,255,.45)}.side-search svg{position:absolute;left:11px;top:10px;width:16px;height:16px;color:rgba(255,255,255,.5)}
+.sem{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;white-space:nowrap}.sem::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(0,0,0,.05)}
+.sem.v{color:var(--ok)}.sem.a{color:var(--warn)}.sem.r{color:var(--bad)}.sem.m{color:var(--muted)}
+tr.urg-r td:first-child{box-shadow:inset 4px 0 0 var(--bad)}tr.urg-a td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:18px;align-items:start}
+.viewer{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff;box-shadow:var(--sh)}
+.viewer .tabs{display:flex;border-bottom:1px solid var(--line);background:#FAFBFC}.viewer .tabs button{background:none;border:0;padding:10px 16px;font-weight:600;font-size:13px;color:var(--muted);border-bottom:2px solid transparent}.viewer .tabs button.on{color:var(--ink);border-bottom-color:var(--teal)}
+.viewer iframe{width:100%;height:78vh;border:0;display:block}
+.alert-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--warn-soft);background:#FFFBF4;border-radius:var(--r-s);margin-bottom:8px}
+.alert-item .pt{font-weight:700;font-size:13px}.alert-item .mt{font-size:12.5px;color:var(--ink-2)}.alert-item.done{opacity:.5}
+.modal-bg{position:fixed;inset:0;background:rgba(15,34,64,.55);display:grid;place-items:center;z-index:20;padding:20px}
+.modal{background:#fff;border-radius:14px;padding:26px 28px;width:100%;max-width:460px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.modal h3{font-size:18px;margin-bottom:6px}
+.dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:18px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);text-align:left;cursor:pointer;transition:transform .1s}.tile:hover{transform:translateY(-1px)}
+.tile b{display:block;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}.tile span{font-size:13px;color:var(--muted);font-weight:500}.tile.r b{color:var(--bad)}.tile.a b{color:var(--warn)}.tile.t b{color:var(--teal-2)}
+.dev{border:1px solid var(--line);border-radius:var(--r-s);padding:14px 16px;margin-bottom:10px}.dev.new{border-left:4px solid var(--info)}
+.dev .q{background:var(--bg);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13.5px}.dev .q b{color:var(--muted);font-size:12px;display:block;margin-bottom:2px}
+.orig{font-size:12.5px;color:var(--muted)}.orig a{font-weight:600}
+textarea.in{min-height:90px;resize:vertical}
+.lote-res li{list-style:none;display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}.lote-res li:first-child{border-top:0}
+.kbd{font-size:11px;border:1px solid var(--line-2);border-radius:4px;padding:0 5px;color:var(--muted);background:#fff}
+@media(max-width:1100px){.split{grid-template-columns:1fr}.viewer iframe{height:60vh}}
+@media(max-width:900px){#app{grid-template-columns:1fr}aside{position:static;height:auto}#login{grid-template-columns:1fr}.lg-brand{display:none}.g2,.g3,.g23{grid-template-columns:1fr}main{padding:20px}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lg-brand">
+    <div class="logo"><div class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><b>Control de Actas</b><small>Subsecretaría de Inspección del Trabajo</small></div></div>
+    <div><h1>La calidad de las inspecciones empieza acá.</h1><p>Detección temprana de errores en actas de inspección, validación de la dirección y seguimiento por inspector.</p></div>
+    <div class="foot">Ministerio de Trabajo · Provincia de Buenos Aires</div>
+  </div>
+  <div class="lg-form"><div class="lg-box">
+    <h2>Ingresar</h2><p class="sub hint" style="margin-top:0">Usá tu usuario y contraseña.</p>
+    <div class="f"><label for="lg-user">Usuario</label><input id="lg-user" autocomplete="username" autocapitalize="off"></div>
+    <div class="f"><label for="lg-pin">Contraseña</label><input id="lg-pin" type="password" autocomplete="current-password"></div>
+    <div class="err" id="lg-err"></div>
+    <button class="btn" style="width:100%;justify-content:center" onclick="login()">Ingresar</button>
+  </div></div>
+</div>
+
+<div id="app">
+  <aside>
+    <div class="logo"><div class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><b>Control de Actas</b><small>Inspección del Trabajo · PBA</small></div></div>
+    <div class="side-search" id="side-search" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg><input id="q" placeholder="Buscar acta, CUIT, empresa…" onkeydown="if(event.key==='Enter')go('buscar',this.value)"></div>
+    <nav id="nav"></nav>
+    <div class="me"><div class="av" id="me-av"></div><div><b id="me-n"></b><small id="me-r"></small></div>
+      <button class="ic" title="Cambiar contraseña" onclick="cambiarClave()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></button>
+      <button class="ic" title="Importar datos" onclick="document.getElementById('imp').click()" style="display:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>
+      <button class="ic" title="Salir" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+      <input type="file" id="imp" accept=".json" style="display:none" onchange="importar(this)">
+    </div>
+  </aside>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+<div id="modal-root"></div>
+
+<script>
+
+/* ===== ÍCONOS ===== */
+const I={
+ inbox:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+ link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+ shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+ users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+ chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+ team:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+ list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+ cog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+ ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+ x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+ send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+ doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+ back:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+};
+
+/* =====================================================================
+   DATOS (en memoria — misma estructura que tendrán las tablas SQLite)
+   ===================================================================== */
+const TIPOS_ACTA=['Intimación','Verificación','Infracción','Informe','Obstrucción','Otro'];
+const PUNTOS_RAI={1:'Libro especial',2:'Acreditación en cuenta sueldo',3:'Recibos de sueldo',4:'Recibos de SAC',5:'Recibos de vacaciones',6:'Horas suplementarias',7:'Horas nocturnas',8:'Feriados nacionales',10:'Libreta fondo de desempleo',11:'Aportes fondo de desempleo',12:'Depósito aportes fondo de desempleo',13:'Afiliación ART',14:'Listado de personal',16:'Mora en el pago',17:'Alta temprana',18:'Domicilio electrónico',99:'Leyenda general'};
+const PERIODOS=[['semana','Semanal (7 días)'],['quincena','Quincenal (15 días)'],['mes','Mensual (30 días)'],['trimestre','Trimestral'],['semestre','Semestral'],['anual','Anual']];
+const RAI='https://www.trabajo.gba.gov.ar/delegaciones/rai/pdf/Actapdf.asp?IdActa=';
+let DB={usuarios:[],inspectores:[],causales:[],supuestos:[],actas:[],errores:[],devoluciones:[],efectividad:[],config:{}};
+let user=null,view=null,viewArg=null,borrador=[],lectura=null,saveT=null;
+const I2={search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>',home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',qa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',dl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'};
+Object.assign(I,I2);
+
+/* ===== utilidades ===== */
+const $=s=>document.querySelector(s);
+const fmt=d=>d?new Date(d).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const fmtD=d=>d?new Date(d).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ini=n=>(n||'?').split(/[\s,]+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+const userName=id=>(DB.usuarios.find(u=>u.id===id)||{}).nombre||'—';
+const insp=c=>DB.inspectores.find(i=>i.codigo===c);
+const inspName=c=>{const i=insp(c);return i?i.nombre:`Inspector ${c} (sin cargar)`};
+const acta=id=>DB.actas.find(a=>a.id===id)||{};
+const errsDe=id=>DB.errores.filter(e=>e.actaId===id);
+const sup=id=>DB.supuestos.find(s=>s.id===id)||{nombre:'(eliminado)',causalId:0};
+const causal=id=>DB.causales.find(c=>c.id===id)||{nombre:'(eliminado)'};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const adminsDe=c=>DB.usuarios.filter(u=>u.rol==='admin'&&u.inspectores.includes(c));
+const puntoLabel=p=>p==='General'?'General / encabezado':`Punto ${p}`;
+const puntoSub=p=>PUNTOS_RAI[p]||'';
+const pendComunicar=c=>DB.errores.filter(e=>e.estado==='validado'&&!e.comunicado&&acta(e.actaId).inspector===c);
+const canEdit=()=>user&&user.rol==='director';
+const isDir=()=>user&&user.rol!=='admin';
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2600)}
+function urg(a){ // semáforo según plazo útil
+  if(!a.plazo)return{cls:'m',label:'Sin plazo',dias:null};
+  const d=(new Date(a.plazo)-Date.now())/864e5;
+  if(a.estado!=='asignada'&&a.estado!=='finalizada')return{cls:'m',label:'Cerrada',dias:d};
+  if(d<0)return{cls:'r',label:`Vencida hace ${Math.ceil(-d)} d`,dias:d};
+  if(d<1)return{cls:'r',label:'Vence hoy',dias:d};
+  if(d<3)return{cls:'a',label:`Vence en ${Math.ceil(d)} d`,dias:d};
+  return{cls:'v',label:`${Math.ceil(d)} días`,dias:d};
+}
+const porUrg=(a,b)=>(a.plazo||'9').localeCompare(b.plazo||'9');
+function statsAdmin(id){
+  const e=DB.errores.filter(x=>acta(x.actaId).adminId===id);
+  const v=e.filter(x=>x.estado==='validado').length,r=e.filter(x=>x.estado==='rechazado').length+DB.efectividad.filter(x=>x.adminId===id).reduce((s,x)=>s+x.rechazados,0),p=e.filter(x=>x.estado==='pendiente').length;
+  const A=DB.actas.filter(a=>a.adminId===id);
+  const fin=A.filter(a=>a.fechaFin),ciclo=fin.length?fin.reduce((s,a)=>s+(new Date(a.fechaFin)-new Date(a.fechaAsignacion))/36e5,0)/fin.length:null;
+  const omis=DB.efectividad.filter(x=>x.adminId===id&&x.marcados===0).reduce((s,x)=>s+x.rechazados,0);
+  return{marcados:v+r+p,validados:v,rechazados:r,pendientes:p,efectividad:pct(v,v+r),resueltos:v+r,asignadas:A.length,porRevisar:A.filter(a=>a.estado==='asignada').length,sinErrores:A.filter(a=>a.estado==='sin_errores').length,atrasadas:A.filter(a=>a.estado==='asignada'&&urg(a).cls==='r').length,ciclo,omisiones:omis};
+}
+
+/* ===== API y sesión ===== */
+async function api(method,url,body,form){const o={method,headers:{}};if(form){o.body=form}else if(body){o.headers['Content-Type']='application/json';o.body=JSON.stringify(body)}
+  const r=await fetch(url,o);let d={};try{d=await r.json()}catch{}
+  if(r.status===401&&url!=='/api/login'){logout();throw new Error('Sesión vencida')}
+  if(!r.ok){const e=new Error(d.error||'Error');e.data=d;throw e}return d}
+async function load(){DB=await api('GET','/api/state');user=DB.me}
+async function login(){try{await api('POST','/api/login',{usuario:$('#lg-user').value,clave:$('#lg-pin').value})}catch(e){$('#lg-err').textContent=e.message;return}await entrar()}
+async function entrar(){await load();$('#lg-err').textContent='';$('#lg-pin').value='';$('#login').style.display='none';$('#app').style.display='grid';
+  $('#me-av').textContent=ini(user.nombre);$('#me-n').textContent=user.nombre;$('#me-r').textContent=user.cargo;$('#side-search').style.display=isDir()?'block':'none';
+  go(user.rol==='admin'?'porRevisar':'inicio');if(user.debeCambiar)modalClave(true)}
+function logout(){api('POST','/api/logout').catch(()=>{});user=null;$('#app').style.display='none';$('#login').style.display='grid'}
+async function refresh(){await load();render()}
+async function run(fn,okMsg){try{await fn();if(okMsg)toast(okMsg);await refresh()}catch(e){toast(e.message)}}
+function modal(html){$('#modal-root').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)cerrarModal()"><div class="modal">${html}</div></div>`}
+function cerrarModal(){$('#modal-root').innerHTML=''}
+function modalClave(obligatorio){modal(`<h3>${obligatorio?'Elegí tu contraseña':'Cambiar contraseña'}</h3><p class="hint" style="margin:0 0 14px">${obligatorio?'Es tu primer ingreso (o te restablecieron la clave). Por seguridad, definí una contraseña propia de al menos 6 caracteres.':'Mínimo 6 caracteres.'}</p>
+  <div class="f"><label>Contraseña actual</label><input id="k-a" type="password"></div><div class="f"><label>Nueva contraseña</label><input id="k-n" type="password"></div><div class="f"><label>Repetir nueva</label><input id="k-r" type="password"></div><div class="err" id="k-err"></div>
+  <div class="row"><button class="btn" onclick="guardarClave()">Guardar</button>${obligatorio?'':'<button class="btn sec" onclick="cerrarModal()">Cancelar</button>'}</div>`)}
+async function guardarClave(){if($('#k-n').value!==$('#k-r').value)return $('#k-err').textContent='Las contraseñas no coinciden.';try{await api('POST','/api/clave',{actual:$('#k-a').value,nueva:$('#k-n').value});cerrarModal();toast('Contraseña guardada.');user.debeCambiar=false}catch(e){$('#k-err').textContent=e.message}}
+function cambiarClave(){modalClave(false)}
+
+/* ===== navegación ===== */
+const TABS={
+  admin:[['','Mi trabajo'],['porRevisar','Actas por revisar','inbox'],['finalizadas','Finalizadas','check'],['devoluciones','Devoluciones','msg']],
+  director:[['','Operación'],['inicio','Inicio','home'],['asignar','Asignar actas','link'],['pendientes','Validar errores','shield'],['inspectores','Inspectores','users'],['control','Control de calidad','qa'],['','Seguimiento'],['estadisticas','Estadísticas','chart'],['informes','Informes','doc'],['equipo','Equipo','team'],['','Configuración'],['catalogo','Catálogo de errores','list'],['abm','Inspectores y usuarios','cog'],['actividad','Actividad','clock']],
+  lector:[['','Consulta'],['inicio','Inicio','home'],['inspectores','Inspectores','users'],['estadisticas','Estadísticas','chart'],['informes','Informes','doc'],['equipo','Equipo','team'],['actividad','Actividad','clock']]
+};
+function badges(){return{porRevisar:DB.actas.filter(a=>a.adminId===user.id&&a.estado==='asignada').length,pendientes:DB.actas.filter(a=>a.estado==='finalizada').length,inspectores:DB.inspectores.filter(i=>pendComunicar(i.codigo).length).length,devoluciones:DB.devoluciones.filter(d=>!d.leida).length,control:DB.actas.filter(a=>a.estado==='sin_errores'&&a.borrador!=='controlada'&&muestra(a)).length}}
+function muestra(a){return a.id%7===0} // muestra determinística ≈ 14 % de las "sin errores"
+function render(){
+  const b=badges(),on=k=>view===k||(view==='revisar'&&k==='porRevisar')||(view==='inspector'&&k==='inspectores')||(view==='controlar'&&k==='control');
+  $('#nav').innerHTML=TABS[user.rol].map(([k,l,ic])=>k?`<button class="${on(k)?'on':''}" onclick="go('${k}')">${I[ic]}<span>${l}</span>${b[k]?`<span class="n">${b[k]}</span>`:''}</button>`:`<div class="grp">${l}</div>`).join('');
+  $('#main').innerHTML=VIEWS[view](viewArg);
+  if(VIEWS[view+'_after'])VIEWS[view+'_after'](viewArg);
+}
+function go(v,arg){if(v==='revisar')borrador=[];view=v;viewArg=arg;render();window.scrollTo(0,0)}
+const ph=(t,s,right='')=>`<div class="ph"><div><h1>${t}</h1>${s?`<p>${s}</p>`:''}</div>${right?`<div class="row">${right}</div>`:''}</div>`;
+const openBtn=(a,cls='btn sec sm')=>`<a class="${cls}" href="${esc(a.link)}" target="_blank" rel="noopener">${I.ext} Abrir en RAI</a>`;
+const kpi=(v,l,hi)=>`<div class="kpi ${hi?'hi':''}"><b>${v}</b><span>${l}</span></div>`;
+const semHtml=a=>{const u=urg(a);return`<span class="sem ${u.cls}" title="${a.plazo?'Plazo útil: '+fmt(a.plazo):''}">${u.label}</span>`};
+const estadoPill=a=>({asignada:'<span class="pill info">Por revisar</span>',finalizada:'<span class="pill warn">En validación</span>',validada:'<span class="pill ok">Con errores validados</span>',sin_errores:'<span class="pill mut">Sin errores</span>'})[a.estado]||'';
+const origenHtml=a=>{if(!a.actaOrigen)return'';const o=DB.actas.find(x=>x.nro===a.actaOrigen);return`<div class="orig">Deriva de ${o?`<a href="#" onclick="event.preventDefault();verActa(${o.id})">${esc(a.actaOrigen)}</a> (${o.estado==='validada'?errsDe(o.id).filter(e=>e.estado==='validado').length+' errores validados':o.estado.replace('_',' ')})`:esc(a.actaOrigen)+' (no cargada en el sistema)'}</div>`};
+function verActa(id){const a=acta(id);if(!a.id)return;if(user.rol==='admin'){if(a.estado==='asignada')go('revisar',id);else go('finalizadas')}else if(a.estado==='finalizada')go('pendientes');else if(a.estado==='sin_errores')go('controlar',id);else go('inspector',a.inspector)}
+function periodoCard(cod){const id='pc'+(cod||'g');return`<div class="card"><h3>Informe por período</h3>
+  <div class="row"><div class="f" style="margin:0;min-width:280px"><label>Inspector</label><select id="${id}-i">${cod?`<option value="${cod}">${esc(inspName(cod))}</option>`:`<option value="todos">Todos los inspectores</option>${DB.inspectores.map(i=>`<option value="${i.codigo}">${esc(i.nombre)}</option>`).join('')}`}</select></div>
+  <div class="f" style="margin:0;min-width:180px"><label>Período</label><select id="${id}-p">${PERIODOS.map(([k,l])=>`<option value="${k}" ${k==='mes'?'selected':''}>${l}</option>`).join('')}</select></div>
+  <div class="f" style="margin:0"><label>Hasta</label><input type="date" id="${id}-h" value="${new Date().toISOString().slice(0,10)}"></div>
+  <div style="align-self:flex-end"><button class="btn" onclick="descargarPeriodo('${id}')">${I.doc} Descargar PDF</button></div></div>
+  <div class="hint">El período se cuenta hacia atrás desde la fecha elegida. Incluye resumen, tendencia, errores por causal, reincidencias y detalle de actas.</div></div>`}
+function descargarPeriodo(id){window.open(`/api/informes/inspector/${$('#'+id+'-i').value}?periodo=${$('#'+id+'-p').value}&hasta=${$('#'+id+'-h').value}`,'_blank')}
+const tablaActas=(list,opts={})=>`<table><thead><tr><th style="padding-left:24px">Acta</th><th>Inspector</th><th>Establecimiento</th>${opts.admin?'<th>Administrativo</th>':''}<th>Plazo</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${list.map(a=>`<tr class="urg-${urg(a).cls}"><td style="padding-left:24px"><b class="mono">${esc(a.nro)}</b>${a.parte?` <span class="cs">P.${a.parte}</span>`:''}<div class="cs">${esc(a.tipo||'')}${a.alertas&&a.alertas.length&&a.estado==='asignada'?` · <span style="color:var(--warn)">${a.alertas.length} alerta${a.alertas.length>1?'s':''}</span>`:''}</div></td><td>${esc(inspName(a.inspector))}</td><td>${esc(a.razon||'—')}</td>${opts.admin?`<td>${esc(userName(a.adminId))}</td>`:''}<td>${semHtml(a)}</td><td>${estadoPill(a)}</td><td style="text-align:right;padding-right:20px"><button class="btn ghost sm" onclick="verActa(${a.id})">Ver</button></td></tr>`).join('')}</tbody></table>`;
+
+/* =====================================================================
+   VISTAS — ADMINISTRATIVO
+   ===================================================================== */
+const VIEWS={
+porRevisar(){
+  const mias=DB.actas.filter(a=>a.adminId===user.id&&a.estado==='asignada').sort(porUrg);
+  const atr=mias.filter(a=>urg(a).cls==='r').length;
+  return ph('Actas por revisar',`${mias.length} acta${mias.length!==1?'s':''} pendiente${mias.length!==1?'s':''}${atr?`, <b style="color:var(--bad)">${atr} con plazo vencido o que vence hoy</b>`:''}. Están ordenadas por urgencia.`)+
+  (mias.length?`<div class="card" style="padding:8px 0"><table><thead><tr><th style="padding-left:24px">Acta</th><th>Inspector</th><th>Establecimiento</th><th>Plazo útil</th><th>Asignada</th><th></th></tr></thead><tbody>
+  ${mias.map(a=>`<tr class="urg-${urg(a).cls}"><td style="padding-left:24px"><b class="mono">${esc(a.nro)}</b>${a.parte?` <span class="cs">P.${a.parte}</span>`:''}<div class="cs">${esc(a.tipo||'')}${a.alertas.length?` · <span style="color:var(--warn)">${a.alertas.length} alerta${a.alertas.length>1?'s':''}</span>`:''}${a.borrador&&a.borrador.marcas&&a.borrador.marcas.length?` · <span style="color:var(--info)">borrador con ${a.borrador.marcas.length}</span>`:''}</div></td><td>${esc(inspName(a.inspector))}</td><td>${esc(a.razon||'—')}</td><td>${semHtml(a)}</td><td class="hint" style="margin:0">${fmt(a.fechaAsignacion)}</td>
+  <td style="text-align:right;padding-right:20px"><button class="btn sm" onclick="go('revisar',${a.id})">Revisar</button></td></tr>`).join('')}</tbody></table></div>`
+  :`<div class="empty"><b>Todo al día</b>No tenés actas pendientes de revisión.</div>`);
+},
+
+revisar(id){
+  const a=acta(id);if(!a.id)return VIEWS.porRevisar();
+  const u=urg(a);
+  return `<button class="back" onclick="go('porRevisar')">${I.back} Actas por revisar</button>`+
+  ph(`<span class="mono">${esc(a.nro)}</span>${a.parte?` <span class="cs">Parte ${a.parte}</span>`:''}`,`${esc(inspName(a.inspector))}${a.razon?' · '+esc(a.razon):''}${a.cuit?' · CUIT '+a.cuit:''}${a.trabajadores!=null?' · '+a.trabajadores+' trabajadores':''}<br>${semHtml(a)} ${a.fechaActa?`<span class="cs">acta del ${fmtD(a.fechaActa)}${a.fechaCitacion?' · citación '+fmt(a.fechaCitacion):''}</span>`:''}${origenHtml(a)}`,openBtn(a))+
+  `<div class="split">
+    <div>
+      <div class="viewer"><div class="tabs">${a.tienePdf?`<button class="on" onclick="tabV(this,'pdf')">Acta (PDF)</button>`:''}<button class="${a.tienePdf?'':'on'}" onclick="tabV(this,'pts')">Puntos leídos (${a.puntos.length})</button>${a.informe?`<button onclick="tabV(this,'inf')">Informe</button>`:''}</div>
+        ${a.tienePdf?`<div id="tv-pdf"><iframe src="/api/actas/${a.id}/pdf#toolbar=1&view=FitH"></iframe></div>`:''}
+        <div id="tv-pts" style="display:${a.tienePdf?'none':'block'}">${a.puntos.length?`<div class="puntos" style="max-height:78vh;border:0;border-radius:0">${(()=>{let s='';return a.puntos.map(p=>(p.s!==s?(s=p.s,`<div class="sec-tag">${esc(p.s.toUpperCase())}</div>`):'')+`<div class="pu" data-n="${p.n}" onclick="pickPunto('${p.n}')"><span class="n">${p.n}</span><span class="t" title="${esc(p.t)}">${esc(p.t)}</span></div>`).join('')})()}</div>`:`<div class="det" style="margin:14px">No se pudieron leer puntos de este PDF. Usá el acta en RAI y elegí el punto a mano.</div>`}</div>
+        ${a.informe?`<div id="tv-inf" style="display:none;padding:16px;font-size:13.5px;white-space:pre-wrap">${esc(a.informe)}</div>`:''}
+      </div>
+    </div>
+    <div>
+      ${a.alertas.length?`<div class="card"><h3>Alertas automáticas <span class="cnt">${a.alertas.length} · el sistema las detectó al leer el acta; confirmá o descartá</span></h3>${a.alertas.map((al,k)=>`<div class="alert-item" id="al-${k}"><div><div class="pt">${puntoLabel(al.punto)} · ${esc(causal(sup(al.supuestoId).causalId).nombre)}</div><div class="mt">${esc(sup(al.supuestoId).nombre)}<br><span class="hint" style="margin:0">${esc(al.motivo)}</span></div></div><button class="btn sec sm" onclick="tomarAlerta(${k})">${I.plus} Marcar</button></div>`).join('')}</div>`:''}
+      <div class="card"><h3>Marcar un error</h3>
+        <div class="row" style="margin-bottom:12px"><div class="f" style="margin:0;flex:1"><label>Tipo de acta</label><select id="r-tipo" onchange="renderForm();guardarBorrador()">${TIPOS_ACTA.map(t=>`<option ${a.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div><div class="f" style="margin:0;flex:1"><label>Punto</label><select id="m-punto"><option value="General">General / encabezado</option>${(a.puntos.length?a.puntos.map(p=>p.n):Array.from({length:99},(_,i)=>String(i+1))).map(n=>`<option value="${n}">${n}${PUNTOS_RAI[n]?' · '+PUNTOS_RAI[n]:''}</option>`).join('')}</select></div></div>
+        <div class="f"><label>Causal</label><select id="m-causal" onchange="fillSup()"></select></div>
+        <div class="f"><label>Supuesto de error</label><select id="m-sup"></select><div class="hint" id="m-ctl"></div></div>
+        <div class="f"><label>Detalle <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><input id="m-det" placeholder="Qué viste, para que el director lo ubique rápido" onkeydown="if(event.key==='Enter')addMarca()"></div>
+        <button class="btn sec" style="width:100%;justify-content:center" onclick="addMarca()">${I.plus} Agregar a la lista</button>
+      </div>
+      <div class="card"><h3>Errores marcados <span class="cnt" id="m-cnt"></span></h3><div id="marcas"></div>
+        <div class="row" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"><button class="btn ok" onclick="finalizar(${a.id})">${I.check} Finalizar revisión</button><button class="btn sec" onclick="sinErrores(${a.id})">No tiene errores</button></div>
+        <div class="hint" style="margin-top:8px" id="auto-save">Se guarda solo mientras trabajás.</div></div>
+    </div>
+  </div>`;
+},
+revisar_after(id){const a=acta(id);if(!a.id)return;if(a.borrador&&a.borrador.marcas){borrador=a.borrador.marcas;if(a.borrador.tipo)$('#r-tipo').value=a.borrador.tipo}renderForm();refreshMarcas()},
+
+finalizadas(){
+  const mias=DB.actas.filter(a=>a.adminId===user.id&&a.estado!=='asignada').sort((a,b)=>(b.fechaFin||'').localeCompare(a.fechaFin||''));
+  return ph('Finalizadas','Actas que ya revisaste. Lo que la dirección decida sobre tus marcas aparece en Devoluciones.')+
+  `<div class="card" style="padding:8px 0">${mias.length?`<table><thead><tr><th style="padding-left:24px">Acta</th><th>Inspector</th><th>Finalizada</th><th>Resultado</th></tr></thead><tbody>
+  ${mias.map(a=>{const E=errsDe(a.id);return`<tr><td style="padding-left:24px"><a class="mono" href="${esc(a.link)}" target="_blank" rel="noopener"><b>${esc(a.nro)}</b></a>${a.parte?` <span class="cs">P.${a.parte}</span>`:''}<div class="cs">${esc(a.tipo||'')}</div></td><td>${esc(inspName(a.inspector))}</td><td class="hint" style="margin:0">${fmt(a.fechaFin)}</td><td>${a.estado==='sin_errores'?'<span class="pill mut">Sin errores</span>':a.estado==='finalizada'?`<span class="pill warn">En validación</span> ${E.length} marcados`:E.map(e=>`<div>${e.estado==='validado'?'<span class="pill ok">Validado</span>':'<span class="pill bad">Rechazado</span>'} <b style="font-weight:600">${puntoLabel(e.punto)}</b> · ${esc(sup(e.supuestoId).nombre)}</div>`).join('')}</td></tr>`}).join('')}</tbody></table>`:'<div class="empty" style="border:0"><b>Nada todavía</b>Las actas que finalices van a aparecer acá.</div>'}</div>`;
+},
+
+devoluciones(){
+  const D=DB.devoluciones.filter(d=>user.rol!=='admin'||d.adminId===user.id);
+  return ph('Devoluciones de la dirección','Marcas tuyas que la dirección no consideró error, con el motivo. Sirven para afinar el criterio; podés responder si no estás de acuerdo.')+
+  (D.length?D.map(d=>`<div class="dev ${d.leida?'':'new'}"><div class="row" style="justify-content:space-between"><div><b>${puntoLabel(d.punto)}</b> · <span class="cs">${esc(causal(sup(d.supuestoId).causalId).nombre)}</span><div>${esc(sup(d.supuestoId).nombre)}</div></div><div class="hint" style="margin:0">${d.nroActa?`<b class="mono">${esc(d.nroActa)}</b> · `:'acta descartada · '}${fmtD(d.fecha)}${user.rol!=='admin'?' · '+esc(userName(d.adminId)):''}</div></div>
+    ${d.detalle?`<div class="q"><b>Lo que marcaste</b>${esc(d.detalle)}</div>`:''}<div class="q" style="background:var(--bad-soft)"><b>Motivo de la dirección</b>${esc(d.comentario||'Sin motivo escrito.')}</div>
+    ${d.respuesta?`<div class="q" style="background:var(--info-soft)"><b>Tu respuesta</b>${esc(d.respuesta)}</div>`:user.rol==='admin'?`<div class="row" style="margin-top:8px"><input class="in" id="dr-${d.id}" placeholder="Responder (opcional)" style="flex:1"><button class="btn sec sm" onclick="responderDev(${d.id})">Enviar</button>${d.leida?'':`<button class="btn ghost sm" onclick="run(()=>api('POST','/api/devoluciones/${d.id}/leida'))">Entendido</button>`}</div>`:''}</div>`).join(''):`<div class="empty"><b>Sin devoluciones</b>Cuando la dirección rechace una marca, aparece acá con el motivo.</div>`);
+},
+
+/* =====================================================================
+   VISTAS — DIRECCIÓN
+   ===================================================================== */
+inicio(){
+  const abiertas=DB.actas.filter(a=>a.estado==='asignada'),atr=abiertas.filter(a=>urg(a).cls==='r'),hoy=abiertas.filter(a=>urg(a).cls==='a');
+  const val=DB.actas.filter(a=>a.estado==='finalizada'),valAtr=val.filter(a=>urg(a).cls==='r');
+  const sinCom=DB.errores.filter(e=>e.estado==='validado'&&!e.comunicado),reinc=sinCom.filter(e=>e.reincidente);
+  const ctrl=DB.actas.filter(a=>a.estado==='sin_errores'&&a.borrador!=='controlada'&&muestra(a));
+  const admins=DB.usuarios.filter(u=>u.rol==='admin');
+  const semana=DB.actas.filter(a=>a.fechaFin&&Date.now()-new Date(a.fechaFin)<7*864e5);
+  return ph('Inicio',`Hoy ${new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}. Esta semana se revisaron ${semana.length} actas, ${semana.filter(a=>a.estado==='validada').length} con errores validados.`)+
+  `<div class="dash">
+    <button class="tile ${valAtr.length?'r':val.length?'a':''}" onclick="go('pendientes')"><b>${val.length}</b><span>Por validar${valAtr.length?` · ${valAtr.length} con plazo vencido`:''}</span></button>
+    <button class="tile ${atr.length?'r':hoy.length?'a':''}" onclick="go('asignar')"><b>${abiertas.length}</b><span>En revisión${atr.length?` · ${atr.length} vencidas`:hoy.length?` · ${hoy.length} vencen pronto`:''}</span></button>
+    <button class="tile ${sinCom.length?'a':''}" onclick="go('inspectores')"><b>${sinCom.length}</b><span>Errores sin comunicar${reinc.length?` · <span style="color:var(--bad)">${reinc.length} reincidencias</span>`:''}</span></button>
+    <button class="tile t" onclick="go('control')"><b>${ctrl.length}</b><span>Muestras de control pendientes</span></button>
+  </div>
+  <div class="g2">
+    <div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Actas más urgentes</h3>${(()=>{const l=[...abiertas,...val].sort(porUrg).slice(0,8);return l.length?tablaActas(l,{admin:true}):'<div class="empty" style="border:0">Nada urgente.</div>'})()}</div>
+    <div class="card"><h3>Carga del equipo</h3>${admins.map(u=>{const s=statsAdmin(u.id);return`<div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)"><div><b style="font-weight:600">${esc(u.nombre)}</b><div class="cs">${s.porRevisar} por revisar${s.atrasadas?` · <span style="color:var(--bad)">${s.atrasadas} vencidas</span>`:''}${s.ciclo!=null?` · ciclo ${s.ciclo<48?Math.round(s.ciclo)+' h':Math.round(s.ciclo/24)+' d'}`:''}</div></div><div style="text-align:right"><b style="color:var(--teal-2)">${s.resueltos?s.efectividad+'%':'—'}</b><div class="cs">efectividad</div></div></div>`}).join('')}
+      ${reinc.length?`<div style="margin-top:14px;padding:12px 14px;background:var(--bad-soft);border-radius:var(--r-s);font-size:13.5px"><b style="color:var(--bad)">Reincidencias sin comunicar:</b> ${[...new Set(reinc.map(e=>acta(e.actaId).inspector))].map(c=>`<a href="#" onclick="event.preventDefault();go('inspector','${c}')">${esc(inspName(c))}</a>`).join(', ')}</div>`:''}</div>
+  </div>`;
+},
+
+buscar(q){
+  q=(q||'').trim();const Q=q.toUpperCase();
+  const A=q?DB.actas.filter(a=>[a.nro,a.razon,a.cuit,a.orden,inspName(a.inspector),a.actaOrigen].join(' ').toUpperCase().includes(Q)):[];
+  const Ii=q?DB.inspectores.filter(i=>(i.nombre+' '+i.codigo+' '+i.legajo).toUpperCase().includes(Q)):[];
+  return ph(`Resultados para "${esc(q)}"`,`${A.length} acta${A.length!==1?'s':''} · ${Ii.length} inspector${Ii.length!==1?'es':''}`)+
+  (Ii.length?`<div class="igrid" style="margin-bottom:18px">${Ii.map(i=>`<button class="icard" onclick="go('inspector','${i.codigo}')"><div class="av">${ini(i.nombre)}</div><div><b>${esc(i.nombre)}</b><small>${i.codigo} · legajo ${esc(i.legajo)}</small></div></button>`).join('')}</div>`:'')+
+  (A.length?`<div class="card" style="padding:8px 0">${tablaActas(A.sort(porUrg),{admin:true})}</div>`:q?'<div class="empty"><b>Sin resultados</b>Probá con el número de acta, el CUIT o parte del nombre.</div>':'');
+},
+
+asignar(){
+  const abiertas=DB.actas.filter(a=>a.estado==='asignada').sort(porUrg),admins=DB.usuarios.filter(u=>u.rol==='admin');
+  return ph('Asignar actas','Pegá uno o varios links de RAI (uno por línea). El sistema descarga cada acta, lee número, inspector, plazos y puntos, detecta alertas y la asigna al administrativo que tiene a ese inspector.')+
+  `<div class="g23">
+    <div class="card">
+      <div class="f"><label>Links de RAI</label><textarea id="a-links" class="in mono" placeholder="${RAI}1829248\n${RAI}1829238" style="min-height:110px;font-size:13px"></textarea><div class="hint">Enter para nueva línea · Ctrl+Enter para asignar</div></div>
+      <div class="row"><button class="btn" id="a-btn" onclick="asignarLote()">${I.send} Asignar</button><div class="f" style="margin:0 0 0 auto;min-width:230px"><select id="a-adm"><option value="">Administrativo automático</option>${admins.map(u=>`<option value="${u.id}">${esc(u.nombre)}</option>`).join('')}</select></div></div>
+      <div id="lectura" style="margin-top:14px"></div>
+      <div class="drop" id="drop" onclick="document.getElementById('a-pdf').click()" style="padding:12px;margin-top:14px"><b>¿RAI no responde? Arrastrá el PDF acá</b>(con el link ya pegado arriba)<input type="file" id="a-pdf" accept="application/pdf" onchange="cargarPDF(this.files[0])"></div>
+    </div>
+    <div class="card"><h3>Qué pasa al asignar</h3><ol style="margin-left:18px;color:var(--ink-2);display:grid;gap:8px;font-size:13.5px"><li>Se descarga el PDF y queda guardado para verlo dentro del sistema.</li><li>Se lee <b>MT-código-número</b>, inspector, establecimiento, fecha del acta y, en intimaciones, la fecha de citación: de ahí sale el <b>plazo útil</b> y el semáforo.</li><li>Se detectan <b>alertas automáticas</b> (personal afectado inconsistente, CUIT inválido, falta de cita normativa, plazo menor a 5 días hábiles, etc.) que el administrativo confirma o descarta.</li><li>Va al administrativo que tiene a cargo a ese inspector. Si querés forzar uno, elegilo a la derecha.</li></ol></div>
+  </div>
+  <div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">En revisión <span class="cnt">${abiertas.length}</span></h3>
+  ${abiertas.length?`<table><thead><tr><th style="padding-left:24px">Acta</th><th>Inspector</th><th>Establecimiento</th><th>Plazo</th><th>Administrativo</th><th></th></tr></thead><tbody>
+  ${abiertas.map(a=>`<tr class="urg-${urg(a).cls}"><td style="padding-left:24px"><a class="mono" href="${esc(a.link)}" target="_blank" rel="noopener"><b>${esc(a.nro)}</b></a>${a.parte?` <span class="cs">P.${a.parte}</span>`:''}<div class="cs">${esc(a.tipo||'')}${a.alertas.length?` · <span style="color:var(--warn)">${a.alertas.length} alerta${a.alertas.length>1?'s':''}</span>`:''}</div></td><td>${esc(inspName(a.inspector))}</td><td>${esc(a.razon||'—')}</td><td>${semHtml(a)}</td><td><select class="in" style="padding:5px 8px;width:auto" onchange="run(()=>api('POST','/api/actas/${a.id}/reasignar',{adminId:+this.value}),'Reasignada.')">${admins.map(u=>`<option value="${u.id}" ${u.id===a.adminId?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></td><td style="text-align:right;padding-right:20px"><button class="btn ghost sm" onclick="quitarActa(${a.id})">Quitar</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty" style="border:0"><b>Sin actas en revisión</b></div>'}</div>`;
+},
+asignar_after(){const d=$('#drop');['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('over')}));['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove('over')}));d.addEventListener('drop',e=>cargarPDF(e.dataTransfer.files[0]));$('#a-links').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))asignarLote()})},
+
+pendientes(){
+  const p=DB.actas.filter(a=>a.estado==='finalizada').sort(porUrg);
+  return ph('Validar errores','Decidí error por error. Si rechazás todos, el acta se elimina del sistema; las marcas rechazadas vuelven al administrativo como devolución con tu motivo.')+
+  (p.length?p.map(a=>`<div class="card">
+    <div class="acta-h"><div><div class="nro mono">${esc(a.nro)}${a.parte?` <span class="cs">Parte ${a.parte}</span>`:''} ${semHtml(a)}</div><div class="meta">${esc(inspName(a.inspector))}${a.razon?' · '+esc(a.razon):''} · ${esc(a.tipo||'')} · revisada por ${esc(userName(a.adminId))} el ${fmt(a.fechaFin)}</div>${origenHtml(a)}</div><div class="row">${a.tienePdf?`<a class="btn sec sm" href="/api/actas/${a.id}/pdf" target="_blank">${I.doc} Ver PDF</a>`:''}${openBtn(a,'btn ghost sm')}</div></div>
+    ${errsDe(a.id).map(e=>{const p=a.puntos.find(x=>x.n===e.punto);return`<div class="err-item"><div class="pt">${puntoLabel(e.punto)}<small>${esc(puntoSub(e.punto))}</small>${e.reincidente?'<small style="color:var(--bad);font-weight:700">Reincidente</small>':''}</div>
+      <div><div class="cs">${esc(causal(sup(e.supuestoId).causalId).nombre)}</div><div>${esc(sup(e.supuestoId).nombre)}</div>${e.detalle?`<div class="dt">${esc(e.detalle)}</div>`:''}${p?`<div class="dt" style="font-style:italic">Acta: ${esc(p.t.slice(0,220))}${p.t.length>220?'…':''}</div>`:''}
+        ${e.estado==='rechazado'?`<input class="in" placeholder="Motivo del rechazo (lo ve el administrativo)" value="${esc(e.comentario)}" onchange="comentarErr(${e.id},this.value)" style="margin-top:8px;padding:6px 10px;font-size:13px;max-width:460px">`:''}</div>
+      <div class="seg"><button class="${e.estado==='validado'?'ok':''}" onclick="decidir(${e.id},'validado')">Es error</button><button class="${e.estado==='rechazado'?'bad':''}" onclick="decidir(${e.id},'rechazado')">No es error</button></div></div>`}).join('')}
+    <div class="row" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><button class="btn" onclick="cerrarValidacion(${a.id})" ${errsDe(a.id).some(e=>e.estado==='pendiente')?'disabled':''}>Confirmar decisión</button><span class="hint" style="margin:0">${resumenDecision(a.id)}</span></div>
+  </div>`).join(''):`<div class="empty"><b>Nada para validar</b>Cuando un administrativo finalice una revisión con errores, aparece acá.</div>`);
+},
+
+control(){
+  const todas=DB.actas.filter(a=>a.estado==='sin_errores'&&a.borrador!=='controlada').sort((a,b)=>(b.fechaFin||'').localeCompare(a.fechaFin||''));
+  const m=todas.filter(muestra),otras=todas.filter(a=>!muestra(a));
+  return ph('Control de calidad','Muestra de actas que los administrativos dieron por limpias, para que la dirección verifique que no se les pasó nada. Si encontrás un error, queda registrado como omisión.')+
+  `<div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Muestra sugerida <span class="cnt">${m.length}</span></h3>${m.length?tablaActas(m,{admin:true}):'<div class="empty" style="border:0"><b>Sin muestras pendientes</b></div>'}</div>
+  <div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Otras actas sin errores <span class="cnt">${otras.length} · también podés controlarlas</span></h3>${otras.length?tablaActas(otras.slice(0,30),{admin:true}):'<div class="empty" style="border:0">Ninguna.</div>'}</div>`;
+},
+controlar(id){
+  const a=acta(id);if(!a.id)return VIEWS.control();
+  return `<button class="back" onclick="go('control')">${I.back} Control de calidad</button>`+ph(`Control · <span class="mono">${esc(a.nro)}</span>${a.parte?` <span class="cs">Parte ${a.parte}</span>`:''}`,`${esc(inspName(a.inspector))}${a.razon?' · '+esc(a.razon):''} · revisada sin errores por ${esc(userName(a.adminId))} el ${fmt(a.fechaFin)}`,openBtn(a))+
+  `<div class="split"><div class="viewer"><div class="tabs"><button class="on">Acta (PDF)</button></div>${a.tienePdf?`<iframe src="/api/actas/${a.id}/pdf#toolbar=1&view=FitH"></iframe>`:`<div class="det" style="margin:14px">Sin PDF guardado; abrila en RAI.</div>`}</div>
+  <div><div class="card"><h3>Resultado del control</h3><p class="hint" style="margin:0 0 12px">Si el acta está bien, confirmalo. Si encontrás errores, marcalos: quedan validados directamente y se registran como omisión del administrativo.</p>
+    <div class="row" style="margin-bottom:12px"><div class="f" style="margin:0;flex:1"><label>Punto</label><select id="m-punto"><option value="General">General / encabezado</option>${(a.puntos.length?a.puntos.map(p=>p.n):Array.from({length:99},(_,i)=>String(i+1))).map(n=>`<option value="${n}">${n}${PUNTOS_RAI[n]?' · '+PUNTOS_RAI[n]:''}</option>`).join('')}</select></div></div>
+    <div class="f"><label>Causal</label><select id="m-causal" onchange="fillSup()"></select></div><div class="f"><label>Supuesto</label><select id="m-sup"></select><div class="hint" id="m-ctl"></div></div><div class="f"><label>Detalle</label><input id="m-det"></div>
+    <button class="btn sec" style="width:100%;justify-content:center" onclick="addMarca()">${I.plus} Agregar error omitido</button></div>
+  <div class="card"><h3>Errores omitidos <span class="cnt" id="m-cnt"></span></h3><div id="marcas"></div><div class="row" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)"><button class="btn ok" onclick="controlOk(${a.id})">${I.check} Confirmar: sin errores</button><button class="btn bad" onclick="controlOmision(${a.id})">Registrar omisión</button></div></div></div></div>`;
+},
+controlar_after(){$('#r-tipo')||null;renderForm(true);refreshMarcas()},
+
+inspectores(){
+  const lista=DB.inspectores.map(i=>({i,pend:pendComunicar(i.codigo),tot:DB.errores.filter(e=>e.estado==='validado'&&acta(e.actaId).inspector===i.codigo).length,reinc:pendComunicar(i.codigo).filter(e=>e.reincidente).length})).sort((a,b)=>b.pend.length-a.pend.length||a.i.nombre.localeCompare(b.i.nombre));
+  const n=lista.filter(x=>x.pend.length).length;
+  return ph('Inspectores',n?`${n} inspector${n>1?'es tienen':' tiene'} errores validados sin comunicar.`:'Todos los inspectores están al día.')+
+  `<div class="igrid">${lista.map(({i,pend,tot,reinc})=>{const A=[...new Set(pend.map(e=>e.actaId))].length;return`<button class="icard ${pend.length?'alert':''}" onclick="go('inspector','${i.codigo}')"><div class="av">${ini(i.nombre)}</div><div style="min-width:0"><b>${esc(i.nombre)}</b><small>${i.codigo}${i.delegacion?' · '+esc(i.delegacion):''}</small><div class="pd ${pend.length?'':'ok'}">${pend.length?`${pend.length} error${pend.length>1?'es':''} en ${A} acta${A>1?'s':''} sin comunicar${reinc?` · <span style="color:var(--bad)">${reinc} reincid.</span>`:''}`:`Al día · ${tot} histórico${tot!==1?'s':''}`}</div></div></button>`}).join('')}</div>`;
+},
+
+inspector(cod){
+  const i=insp(cod)||{nombre:cod,codigo:cod,legajo:'—',delegacion:''},pend=pendComunicar(cod),porActa={};pend.forEach(e=>(porActa[e.actaId]=porActa[e.actaId]||[]).push(e));
+  const com=DB.errores.filter(e=>e.estado==='validado'&&e.comunicado&&acta(e.actaId).inspector===cod),porActaC={};com.forEach(e=>(porActaC[e.actaId]=porActaC[e.actaId]||[]).push(e));
+  const bloque=(aid,errs,pendiente)=>{const a=acta(+aid),sub=errs.every(e=>e.subsanado);return`<div style="border:1px solid var(--line);border-left:4px solid ${pendiente?'var(--warn)':sub?'var(--ok)':'var(--info)'};border-radius:var(--r-s);padding:12px 16px;margin-bottom:10px"><div class="acta-h" style="margin-bottom:6px"><div><b class="mono">${esc(a.nro)}</b>${a.parte?` <span class="cs">Parte ${a.parte}</span>`:''}<span class="cs"> · ${esc(a.tipo||'')}${a.razon?' · '+esc(a.razon):''} · ${fmtD(a.fechaFin)}</span>${pendiente?'':sub?` <span class="pill ok">Subsanada ${fmtD(errs[0].fechaSubsanado)}</span>`:` <span class="pill info">Comunicada ${fmtD(errs[0].fechaComunicado)}</span>`}${origenHtml(a)}</div><div class="row">${openBtn(a,'btn ghost sm')}<a class="btn sec sm" href="/api/informes/acta/${a.id}" target="_blank">${I.doc} Informe</a>${!pendiente&&!sub&&canEdit()?`<button class="btn ok sm" onclick="run(()=>api('POST','/api/actas/${a.id}/subsanar'),'Marcada como subsanada.')">${I.check} Subsanada</button>`:''}</div></div>
+    ${errs.map(e=>`<div style="padding:5px 0;font-size:13.5px"><b style="font-weight:600">${puntoLabel(e.punto)}</b> · ${esc(sup(e.supuestoId).nombre)}${e.reincidente?' <span class="pill bad">Reincidente</span>':''}${e.detalle?`<span class="hint" style="display:inline;margin-left:6px">— ${esc(e.detalle)}</span>`:''}</div>`).join('')}</div>`};
+  return `<button class="back" onclick="go('inspectores')">${I.back} Inspectores</button>`+ph(esc(i.nombre),`Código ${i.codigo} · legajo ${esc(i.legajo)}${i.delegacion?' · '+esc(i.delegacion):''} · a cargo de ${adminsDe(cod).map(u=>esc(u.nombre)).join(', ')||'nadie'}`,`<button class="btn ghost" onclick="go('estadisticas','${cod}')">${I.chart} Estadísticas</button>`)+
+  `<div class="card"><h3>Para comunicar <span class="cnt">${pend.length}</span></h3>
+  ${pend.length?Object.entries(porActa).map(([aid,errs])=>bloque(aid,errs,true)).join('')+(canEdit()?`<div class="row" style="margin-top:14px"><button class="btn" onclick="comunicar('${cod}')">${I.send} Marcar todo como comunicado</button><span class="hint" style="margin:0">Descargá el informe de cada acta para entregarlo o enviarlo.</span></div>`:'')
+  :'<div class="empty" style="border:0;padding:20px"><b>Al día</b>Nada pendiente de comunicar.</div>'}</div>
+  ${periodoCard(cod)}
+  <div class="card"><h3>Comunicados <span class="cnt">${com.length} errores · ${Object.keys(porActaC).length} actas · ${com.filter(e=>e.subsanado).length} subsanados</span></h3>
+  ${com.length?Object.entries(porActaC).sort((a,b)=>(acta(+b[0]).fechaFin||'').localeCompare(acta(+a[0]).fechaFin||'')).map(([aid,errs])=>bloque(aid,errs,false)).join(''):'<div class="empty" style="border:0">Sin historial.</div>'}</div>`;
+},
+
+estadisticas(cod){
+  cod=cod||'';
+  const errs=DB.errores.filter(e=>e.estado==='validado'&&(!cod||acta(e.actaId).inspector===cod));
+  const meses={};errs.forEach(e=>{const m=(acta(e.actaId).fechaFin||e.fechaRevision||'').slice(0,7);if(m)meses[m]=(meses[m]||0)+1});
+  const actasMes={};DB.actas.filter(a=>a.estado!=='asignada'&&(!cod||a.inspector===cod)).forEach(a=>{const m=(a.fechaFin||'').slice(0,7);if(m)actasMes[m]=(actasMes[m]||0)+1});
+  const mk=Object.keys({...meses,...actasMes}).sort(),max=Math.max(1,...Object.values(meses));
+  const porCausal={},porSup={},porDel={};errs.forEach(e=>{const c=sup(e.supuestoId).causalId;porCausal[c]=(porCausal[c]||0)+1;porSup[e.supuestoId]=(porSup[e.supuestoId]||0)+1;const d=(insp(acta(e.actaId).inspector)||{}).delegacion||'Sin delegación';porDel[d]=(porDel[d]||0)+1});
+  const rank=Object.entries(porCausal).sort((a,b)=>b[1]-a[1]),rankS=Object.entries(porSup).sort((a,b)=>b[1]-a[1]).slice(0,8),rankD=Object.entries(porDel).sort((a,b)=>b[1]-a[1]);
+  const revisadas=DB.actas.filter(a=>a.estado!=='asignada'&&(!cod||a.inspector===cod)).length;
+  return ph('Estadísticas','Errores validados, causales recurrentes, evolución mensual y reincidencia.',`<div class="f" style="margin:0;min-width:300px"><select onchange="go('estadisticas',this.value)"><option value="">Todos los inspectores</option>${DB.inspectores.map(i=>`<option value="${i.codigo}" ${i.codigo===cod?'selected':''}>${esc(i.nombre)} (${i.codigo})</option>`).join('')}</select></div><a class="btn sec" href="/api/export/actas.csv">${I.dl} Excel</a>`)+
+  `<div class="kpis">${kpi(errs.length,'Errores validados',1)}${kpi(revisadas,'Actas revisadas')}${kpi(revisadas?(errs.length/revisadas).toFixed(1):'—','Errores por acta')}${kpi(errs.filter(e=>e.reincidente).length,'Reincidencias')}${kpi(errs.filter(e=>e.subsanado).length,'Subsanados')}${kpi(errs.filter(e=>!e.comunicado).length,'Sin comunicar')}</div>
+  <div class="g2">
+    <div class="card"><h3>Evolución mensual <span class="cnt">errores validados · actas revisadas</span></h3>${mk.length?`<div class="tl">${mk.map(m=>`<div class="tlc"><div class="tlb" style="height:${Math.round((meses[m]||0)/max*120)}px"></div><div class="tlv">${meses[m]||0}</div><div class="tlm">${m.slice(5)}/${m.slice(2,4)}</div><div class="tla">${actasMes[m]||0} actas</div></div>`).join('')}</div>`:'<div class="empty" style="border:0">Sin datos.</div>'}</div>
+    <div class="card"><h3>Causales recurrentes</h3>${rank.length?rank.map(([c,n])=>`<div style="display:grid;grid-template-columns:1fr 40px;gap:10px;align-items:center;padding:7px 0;font-size:13.5px"><div>${esc(causal(+c).nombre)}<div class="bar"><i style="width:${pct(n,rank[0][1])}%"></i></div></div><b style="text-align:right">${n}</b></div>`).join(''):'<div class="empty" style="border:0">Sin datos.</div>'}</div>
+  </div>
+  <div class="g2"><div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Supuestos más frecuentes</h3>${rankS.length?`<table><tbody>${rankS.map(([s,n])=>`<tr><td style="padding-left:24px"><div class="cs">${esc(causal(sup(+s).causalId).nombre)}</div>${esc(sup(+s).nombre)}</td><td style="width:70px;text-align:right;padding-right:24px"><b>${n}</b></td></tr>`).join('')}</tbody></table>`:'<div class="empty" style="border:0">Sin datos.</div>'}</div>
+  ${!cod?`<div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Por delegación</h3>${rankD.length?`<table><tbody>${rankD.map(([d,n])=>`<tr><td style="padding-left:24px">${esc(d)}</td><td style="width:70px;text-align:right;padding-right:24px"><b>${n}</b></td></tr>`).join('')}</tbody></table>`:'<div class="empty" style="border:0">Cargá la delegación de cada inspector en Inspectores y usuarios.</div>'}</div>`:''}</div>`;
+},
+
+informes(){
+  const val=DB.actas.filter(a=>a.estado==='validada').sort((a,b)=>(b.fechaFin||'').localeCompare(a.fechaFin||''));
+  return ph('Informes','Informe único por acta revisada, e informes por período que agrupan la situación de un inspector o de toda la dirección.',`<a class="btn sec" href="/api/export/actas.csv">${I.dl} Exportar todo a Excel</a>`)+periodoCard('')+
+  `<div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 6px">Informes por acta <span class="cnt">${val.length} actas con errores validados</span></h3>
+  ${val.length?`<table><thead><tr><th style="padding-left:24px">Acta</th><th>Inspector</th><th>Establecimiento</th><th>Finalizada</th><th>Errores</th><th></th></tr></thead><tbody>${val.map(a=>{const E=errsDe(a.id).filter(e=>e.estado==='validado');return`<tr><td style="padding-left:24px"><b class="mono">${esc(a.nro)}</b>${a.parte?` <span class="cs">P.${a.parte}</span>`:''}</td><td>${esc(inspName(a.inspector))}</td><td>${esc(a.razon||'—')}</td><td class="hint" style="margin:0">${fmtD(a.fechaFin)}</td><td>${E.length} ${E.every(e=>e.subsanado)?'<span class="pill ok">subsanados</span>':E.every(e=>e.comunicado)?'<span class="pill info">comunicados</span>':'<span class="pill warn">sin comunicar</span>'}</td><td style="text-align:right;padding-right:20px"><a class="btn sec sm" href="/api/informes/acta/${a.id}" target="_blank">${I.doc} Descargar</a></td></tr>`}).join('')}</tbody></table>`:'<div class="empty" style="border:0"><b>Todavía no hay actas con errores validados</b></div>'}</div>`;
+},
+
+equipo(){
+  const admins=DB.usuarios.filter(u=>u.rol==='admin');
+  return ph('Equipo administrativo','Precisión = validados ÷ (validados + rechazados). Las omisiones salen del control de calidad: errores que el administrativo no vio y la dirección sí.')+
+  `<div class="igrid" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">${admins.map(u=>{const s=statsAdmin(u.id);return`<div class="card" style="margin:0"><div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><div class="av" style="width:42px;height:42px">${ini(u.nombre)}</div><div><b style="font-size:15px">${esc(u.nombre)}</b><div class="cs">${u.inspectores.length} inspectores · ${s.ciclo!=null?'ciclo '+(s.ciclo<48?Math.round(s.ciclo)+' h':Math.round(s.ciclo/24)+' d'):'sin ciclo aún'}</div></div><div style="margin-left:auto;text-align:right"><b style="font-size:26px;font-weight:800;color:var(--teal-2)">${s.resueltos?s.efectividad+'%':'—'}</b><div class="cs">precisión</div></div></div>
+    <div class="bar" style="margin:0 0 14px"><i style="width:${s.efectividad}%"></i></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:12px;color:var(--muted)"><div><b style="display:block;color:var(--ink);font-size:16px">${s.asignadas}</b>asignadas</div><div><b style="display:block;color:${s.atrasadas?'var(--bad)':'var(--ink)'};font-size:16px">${s.porRevisar}</b>por revisar</div><div><b style="display:block;color:var(--ok);font-size:16px">${s.validados}</b>validados</div><div><b style="display:block;color:var(--bad);font-size:16px">${s.rechazados}</b>rechazados</div><div><b style="display:block;color:var(--warn);font-size:16px">${s.omisiones}</b>omisiones</div></div></div>`}).join('')}</div>`;
+},
+
+catalogo(){
+  return ph('Catálogo de errores','Causales y supuestos que ven los administrativos. Podés limitar cada causal a ciertos tipos de acta; sin tilde, aplica a todos.',`<div class="row"><input id="cat-newc" class="in" placeholder="Nuevo causal" style="width:240px"><button class="btn" onclick="addCausal()">${I.plus} Causal</button></div>`)+
+  DB.causales.map(c=>`<details class="cat"><summary><span>${esc(c.nombre)} <span class="cnt" style="font-weight:500;color:var(--muted);font-size:13px">· ${DB.supuestos.filter(s=>s.causalId===c.id&&s.activo).length} supuestos${c.tipos.length?' · '+c.tipos.join(', '):''}${c.aparte?' · registro aparte':''}</span></span><span class="cs">editar</span></summary><div class="body">
+    <div class="g2"><div class="f"><label>Nombre del causal</label><input value="${esc(c.nombre)}" onchange="editCausal(${c.id},'nombre',this.value)"></div><div class="f"><label>Tipos de acta donde aplica</label><div class="chips" style="padding-top:4px">${TIPOS_ACTA.map(t=>`<label class="chip ${c.tipos.includes(t)?'sel':''}"><input type="checkbox" ${c.tipos.includes(t)?'checked':''} onchange="toggleTipo(${c.id},'${t}',this.checked)">${t}</label>`).join('')}</div></div></div>
+    <div class="f"><label>Qué se controla</label><textarea onchange="editCausal(${c.id},'controla',this.value)" style="min-height:60px">${esc(c.controla)}</textarea></div>
+    <label class="hint" style="display:block;margin:-6px 0 12px"><input type="checkbox" ${c.aparte?'checked':''} onchange="editCausal(${c.id},'aparte',this.checked)"> Registrar aparte (problema de la lista del RAI, no de criterio del inspector)</label>
+    <ul class="catlist">${DB.supuestos.filter(s=>s.causalId===c.id).map(s=>`<li class="${s.activo?'':'off'}"><input class="in" value="${esc(s.nombre)}" onchange="editSup(${s.id},this.value)" ${s.activo?'':'disabled'} style="padding:7px 10px"><button class="btn ghost sm" onclick="toggleSup(${s.id})">${s.activo?'Desactivar':'Reactivar'}</button></li>`).join('')}</ul>
+    <div class="row" style="margin-top:10px"><input id="cat-news-${c.id}" class="in" placeholder="Nuevo supuesto de error" style="flex:1;padding:7px 10px"><button class="btn sec sm" onclick="addSup(${c.id})">${I.plus} Agregar</button></div>
+  </div></details>`).join('');
+},
+
+abm(){
+  const admins=DB.usuarios.filter(u=>u.rol==='admin');
+  return ph('Inspectores y usuarios','El código del inspector es el que figura en el número de acta (MT-<b>0608</b>-…). Cada inspector debería tener un solo administrativo a cargo.')+
+  `<div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 10px">Inspectores <span class="cnt">${DB.inspectores.length}</span></h3>
+  <div class="row" style="padding:0 24px 14px"><input id="i-cod" class="in mono" placeholder="Código" style="width:100px"><input id="i-nom" class="in" placeholder="APELLIDO, NOMBRE" style="flex:1"><input id="i-leg" class="in" placeholder="Legajo" style="width:110px"><input id="i-del" class="in" placeholder="Delegación" style="width:160px"><button class="btn" onclick="addInsp()">${I.plus} Inspector</button></div>
+  <table><thead><tr><th style="padding-left:24px">Código</th><th>Inspector</th><th>Legajo</th><th>Delegación</th><th>A cargo de</th><th></th></tr></thead><tbody>
+  ${DB.inspectores.slice().sort((a,b)=>a.codigo.localeCompare(b.codigo)).map(i=>`<tr><td class="mono" style="padding-left:24px"><b>${i.codigo}</b></td><td><input class="in" value="${esc(i.nombre)}" onchange="editInsp(${i.id},'nombre',this.value)" style="padding:6px 10px"></td><td><input class="in" value="${esc(i.legajo)}" onchange="editInsp(${i.id},'legajo',this.value)" style="width:100px;padding:6px 10px"></td><td><input class="in" value="${esc(i.delegacion||'')}" onchange="editInsp(${i.id},'delegacion',this.value)" style="width:150px;padding:6px 10px" placeholder="—"></td>
+  <td><select class="in" style="padding:6px 10px" onchange="setAdmin('${i.codigo}',this.value)"><option value="">— nadie —</option>${admins.map(u=>`<option value="${u.id}" ${u.inspectores.includes(i.codigo)?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></td>
+  <td style="text-align:right;padding-right:20px"><button class="btn ghost sm" onclick="delInsp(${i.id})">Quitar</button></td></tr>`).join('')}</tbody></table></div>
+  <div class="card" style="padding:8px 0"><h3 style="padding:14px 24px 10px">Usuarios <span class="cnt">${DB.usuarios.length}</span></h3>
+  <div class="row" style="padding:0 24px 14px"><input id="u-usr" class="in" placeholder="usuario" style="width:130px" autocapitalize="off"><input id="u-nom" class="in" placeholder="Nombre y apellido" style="flex:1"><input id="u-pin" class="in" placeholder="Contraseña inicial" style="width:150px"><select id="u-rol" class="in" style="width:170px"><option value="admin">Administrativo</option><option value="director">Director</option><option value="subdirector">Subdirector</option><option value="lector">Solo lectura</option></select><button class="btn" onclick="addUser()">${I.plus} Usuario</button></div>
+  <table><thead><tr><th style="padding-left:24px">Nombre</th><th>Rol</th><th>Inspectores a cargo</th><th></th></tr></thead><tbody>
+  ${DB.usuarios.map(u=>`<tr><td style="padding-left:24px"><div style="display:flex;gap:10px;align-items:center"><div class="av" style="width:30px;height:30px;font-size:11px">${ini(u.nombre)}</div><div><b>${esc(u.nombre)}</b><div class="cs mono">${esc(u.usuario)}</div></div></div></td><td><span class="pill ${u.rol==='director'?'info':u.rol==='lector'?'mut':'ok'}">${esc(u.cargo)}</span></td><td style="font-size:13px">${u.rol==='admin'?(u.inspectores.map(c=>esc(inspName(c))).join(', ')||'<span class="hint" style="margin:0">ninguno</span>'):'—'}</td><td style="text-align:right;padding-right:20px;white-space:nowrap">${u.id===user.id?'':`<button class="btn ghost sm" onclick="resetClave(${u.id})">Restablecer clave</button><button class="btn ghost sm" onclick="delUser(${u.id})">Eliminar</button>`}</td></tr>`).join('')}</tbody></table></div>`;
+},
+
+actividad(){return ph('Actividad','Registro de auditoría: quién hizo qué y cuándo. Últimas 300 acciones.')+`<div class="card" style="padding:8px 0" id="aud"><div class="empty" style="border:0">Cargando…</div></div>`},
+actividad_after(){api('GET','/api/auditoria').then(L=>{const N={login:'Ingresó',logout:'Salió',login_fallido:'Intento de ingreso fallido',cambio_clave:'Cambió su contraseña',asignar:'Asignó acta',quitar:'Quitó asignación',reasignar:'Reasignó acta',finalizar:'Finalizó revisión',sin_errores:'Marcó sin errores',decidir:'Decidió sobre un error',validar:'Validó acta',rechazar_todo:'Rechazó todas las marcas (acta eliminada)',comunicar:'Comunicó al inspector',subsanar:'Marcó subsanada',control_ok:'Control: confirmó sin errores',control_omision:'Control: registró omisión',alta:'Alta',editar:'Editó',baja:'Baja',reset_clave:'Restableció contraseña'};
+  $('#aud').innerHTML=L.length?`<table><thead><tr><th style="padding-left:24px">Fecha</th><th>Usuario</th><th>Acción</th><th>Sobre</th><th>Detalle</th></tr></thead><tbody>${L.map(l=>`<tr><td class="hint" style="margin:0;padding-left:24px;white-space:nowrap">${fmt(l.fecha)}</td><td>${esc(l.usuario)}</td><td><b style="font-weight:600">${N[l.accion]||l.accion}</b></td><td class="cs">${esc(l.entidad)} ${esc(l.entidad_id)}</td><td class="hint" style="margin:0">${esc(l.detalle)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty" style="border:0">Sin actividad.</div>'}).catch(e=>toast(e.message))}
+};
+
+/* ===== revisión: formulario, alertas, borrador ===== */
+function tabV(btn,k){btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===btn));['pdf','pts','inf'].forEach(x=>{const el=$('#tv-'+x);if(el)el.style.display=x===k?'block':'none'})}
+function renderForm(sinTipo){
+  const tipo=sinTipo?'':($('#r-tipo')||{}).value||'';const cs=DB.causales.filter(c=>(!c.tipos.length||!tipo||c.tipos.includes(tipo))&&DB.supuestos.some(s=>s.causalId===c.id&&s.activo));
+  $('#m-causal').innerHTML=cs.map(c=>`<option value="${c.id}">${esc(c.nombre)}</option>`).join('');fillSup();
+}
+function fillSup(){const c=causal(+$('#m-causal').value);$('#m-sup').innerHTML=DB.supuestos.filter(s=>s.causalId===c.id&&s.activo).map(s=>`<option value="${s.id}">${esc(s.nombre)}</option>`).join('');$('#m-ctl').innerHTML=c.controla?`<b style="color:var(--ink-2)">Qué se controla:</b> ${esc(c.controla)}`:''}
+function pickPunto(n){$('#m-punto').value=n;document.querySelectorAll('.pu').forEach(p=>p.classList.toggle('sel',p.dataset.n===n));$('#m-det').focus()}
+function refreshMarcas(){
+  $('#m-cnt').textContent=borrador.length?`${borrador.length}`:'';
+  $('#marcas').innerHTML=borrador.length?borrador.map((m,i)=>`<div class="err-item"><div class="pt">${puntoLabel(m.punto)}<small>${esc(puntoSub(m.punto))}</small></div><div><div class="cs">${esc(causal(sup(m.supuestoId).causalId).nombre)}</div><div>${esc(sup(m.supuestoId).nombre)}</div>${m.detalle?`<div class="dt">${esc(m.detalle)}</div>`:''}</div><button class="btn ghost sm" onclick="borrador.splice(${i},1);refreshMarcas();guardarBorrador()">${I.x}</button></div>`).join('')
+  :`<div class="hint" style="margin:0">Todavía no marcaste errores. Tocá un punto del acta, una alerta, o completá el formulario.</div>`;
+  document.querySelectorAll('.alert-item').forEach((el,k)=>{const a=acta(viewArg).alertas[k];el.classList.toggle('done',!!a&&borrador.some(m=>m.punto===a.punto&&m.supuestoId===a.supuestoId))});
+}
+function addMarca(){const m={punto:$('#m-punto').value,supuestoId:+$('#m-sup').value,detalle:$('#m-det').value.trim()};if(borrador.some(x=>x.punto===m.punto&&x.supuestoId===m.supuestoId))return toast('Ese error ya está marcado en ese punto.');borrador.push(m);$('#m-det').value='';refreshMarcas();guardarBorrador();toast('Error agregado.')}
+function tomarAlerta(k){const al=acta(viewArg).alertas[k];if(borrador.some(m=>m.punto===al.punto&&m.supuestoId===al.supuestoId))return toast('Ya está marcada.');borrador.push({punto:al.punto,supuestoId:al.supuestoId,detalle:al.motivo});refreshMarcas();guardarBorrador();toast('Alerta marcada como error.')}
+function guardarBorrador(){if(view!=='revisar')return;clearTimeout(saveT);const id=viewArg,tipo=($('#r-tipo')||{}).value;saveT=setTimeout(()=>{api('PUT',`/api/actas/${id}/borrador`,{tipo,marcas:borrador}).then(()=>{const a=acta(id);if(a.id)a.borrador={tipo,marcas:[...borrador]};const el=$('#auto-save');if(el)el.textContent='Borrador guardado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}).catch(()=>{})},600)}
+
+/* ===== acciones ===== */
+function finalizar(id){if(!borrador.length)return toast('No marcaste errores. Si el acta está bien, usá "No tiene errores".');const tipo=$('#r-tipo').value;run(async()=>{await api('POST',`/api/actas/${id}/finalizar`,{tipo,marcas:borrador});borrador=[];view='finalizadas'},'Revisión finalizada. Pasa a la dirección.')}
+function sinErrores(id){const tipo=$('#r-tipo').value;if(borrador.length&&!confirm('Tenés errores marcados. ¿Registrar el acta como sin errores igual?'))return;run(async()=>{await api('POST',`/api/actas/${id}/sin-errores`,{tipo});borrador=[];view='porRevisar'},'Acta registrada sin errores.')}
+function controlOk(id){run(async()=>{await api('POST',`/api/actas/${id}/control`,{marcas:[]});view='control'},'Control confirmado: sin errores.')}
+function controlOmision(id){if(!borrador.length)return toast('Marcá al menos un error omitido.');run(async()=>{await api('POST',`/api/actas/${id}/control`,{marcas:borrador});borrador=[];view='control'},'Omisión registrada. Los errores quedan validados.')}
+function mostrarLectura(d,adminId){const ad=adminId?[DB.usuarios.find(u=>u.id===adminId)].filter(Boolean):adminsDe(d.inspector);
+  return`<div class="det"><dl><dt>Acta</dt><dd class="mono">${esc(d.nro)} · Parte ${esc(d.parte||'—')} · ${esc(d.tipo||'—')}</dd><dt>Inspector</dt><dd>${esc(inspName(d.inspector))}</dd><dt>Establecimiento</dt><dd>${esc(d.razon||'—')}${d.cuit?' · CUIT '+d.cuit:''}</dd><dt>Plazo útil</dt><dd>${d.plazo?fmt(d.plazo):'—'}${d.fechaCitacion?' (citación)':d.fechaActa?' (acta + 5 días hábiles)':''}</dd><dt>Lectura</dt><dd>${(d.puntos||[]).length} puntos · ${(d.alertas||[]).length} alerta${(d.alertas||[]).length!==1?'s':''}</dd><dt>Asignada a</dt><dd>${ad.length?esc(ad.map(u=>u.nombre).join(' / ')):'<span style="color:var(--bad)">sin administrativo a cargo, elegí uno y volvé a asignar</span>'}</dd></dl></div>`}
+async function asignarLote(){const links=$('#a-links').value.trim();if(!links)return toast('Pegá al menos un link.');const b=$('#a-btn');b.disabled=true;
+  const n=links.split(/\s+/).filter(Boolean).length;$('#lectura').innerHTML=`<div class="det">Descargando y leyendo ${n} acta${n>1?'s':''} desde RAI…</div>`;
+  try{const r=await api('POST','/api/actas/lote',{links,adminId:+$('#a-adm').value||0});await load();
+    const okN=r.resultados.filter(x=>x.ok).length;
+    $('#lectura').innerHTML=`<div class="det"><b>${okN} de ${r.resultados.length} asignada${okN!==1?'s':''}</b><ul class="lote-res" style="margin-top:8px">${r.resultados.map(x=>`<li>${x.ok?`<span class="pill ok">OK</span> <b class="mono">${esc(x.nro)} ${esc(x.parte)}</b> → ${esc(userName(x.adminId))}${x.alertas?` <span class="cs">· ${x.alertas} alerta${x.alertas>1?'s':''}</span>`:''}`:`<span class="pill bad">Error</span> ${x.nro?`<b class="mono">${esc(x.nro)}</b> `:''}${esc(x.error)} <span class="cs mono">${esc(x.link.replace(RAI,'…IdActa='))}</span>`}</li>`).join('')}</ul></div>`;
+    if(okN)$('#a-links').value=r.resultados.filter(x=>!x.ok).map(x=>x.link).join('\n');render();$('#lectura')&&($('#lectura').innerHTML=$('#lectura').innerHTML);
+  }catch(e){$('#lectura').innerHTML=`<div class="det" style="color:var(--bad)">${esc(e.message)}</div>`}finally{if($('#a-btn'))$('#a-btn').disabled=false}}
+async function cargarPDF(file){if(!file)return;const link=($('#a-links').value.trim().split(/\s+/)[0]||'');if(!/^https?:\/\/.*IdActa=\d+/i.test(link))return toast('Primero pegá el link del acta arriba, después el PDF.');
+  $('#lectura').innerHTML='<div class="det">Leyendo el PDF…</div>';const fd=new FormData();fd.append('pdf',file);fd.append('link',link);fd.append('adminId',$('#a-adm').value||'0');
+  try{const r=await api('POST','/api/actas/pdf',null,fd);await load();toast(`${r.lectura.nro} asignada a ${userName(r.adminId)}.`);$('#a-links').value='';render();$('#lectura').innerHTML=mostrarLectura(r.lectura,r.adminId)}catch(e){$('#lectura').innerHTML=e.data&&e.data.lectura?mostrarLectura(e.data.lectura,0):`<div class="det" style="color:var(--bad)">${esc(e.message)}</div>`}}
+function quitarActa(id){if(!confirm('¿Quitar esta asignación?'))return;run(()=>api('DELETE',`/api/actas/${id}`),'Asignación quitada.')}
+function decidir(id,estado){const e=DB.errores.find(x=>x.id===id);run(async()=>{const r=await api('POST',`/api/errores/${id}/decidir`,{estado,comentario:e.comentario});if(r.reincidente)toast('Atención: este inspector ya fue comunicado por este mismo supuesto.')})}
+function comentarErr(id,v){const e=DB.errores.find(x=>x.id===id);e.comentario=v;api('POST',`/api/errores/${id}/decidir`,{estado:e.estado,comentario:v}).catch(x=>toast(x.message))}
+function resumenDecision(id){const E=errsDe(id),v=E.filter(e=>e.estado==='validado').length,r=E.filter(e=>e.estado==='rechazado').length,p=E.filter(e=>e.estado==='pendiente').length;if(p)return`Faltan decidir ${p} de ${E.length}.`;if(!v)return'Todos rechazados: el acta se elimina y las marcas van a Devoluciones del administrativo.';return`${v} validado${v>1?'s':''}, ${r} rechazado${r!==1?'s':''}. Pasa a Inspectores para comunicar.`}
+function cerrarValidacion(id){const E=errsDe(id);if(E.some(e=>e.estado==='rechazado'&&!e.comentario)&&!confirm('Hay rechazos sin motivo. Al administrativo le sirve saber por qué. ¿Confirmar igual?'))return;run(async()=>{const r=await api('POST',`/api/actas/${id}/cerrar`);toast(r.eliminada?'Acta eliminada del sistema.':`${r.validados} error${r.validados>1?'es':''} validado${r.validados>1?'s':''}. El informe está en Inspectores.`)})}
+function comunicar(c){run(()=>api('POST',`/api/inspectores/${c}/comunicar`),'Marcado como comunicado.')}
+function responderDev(id){const v=$('#dr-'+id).value.trim();if(!v)return;run(()=>api('POST',`/api/devoluciones/${id}/responder`,{respuesta:v}),'Respuesta enviada.')}
+function addCausal(){const n=$('#cat-newc').value.trim();if(!n)return;run(()=>api('POST','/api/causales',{nombre:n}),'Causal agregado.')}
+function editCausal(id,k,v){run(()=>api('PUT',`/api/causales/${id}`,{[k]:typeof v==='string'?v.trim():v}),'Catálogo actualizado.')}
+function toggleTipo(id,t,on){const c=causal(id);const tipos=on?[...new Set([...c.tipos,t])]:c.tipos.filter(x=>x!==t);run(()=>api('PUT',`/api/causales/${id}`,{tipos}))}
+function addSup(cid){const n=$('#cat-news-'+cid).value.trim();if(!n)return;run(()=>api('POST','/api/supuestos',{causalId:cid,nombre:n}),'Supuesto agregado.')}
+function editSup(id,v){if(v.trim())run(()=>api('PUT',`/api/supuestos/${id}`,{nombre:v.trim()}),'Supuesto actualizado.')}
+function toggleSup(id){run(()=>api('PUT',`/api/supuestos/${id}`,{activo:!sup(id).activo}))}
+function addInsp(){run(()=>api('POST','/api/inspectores',{codigo:$('#i-cod').value.trim(),nombre:$('#i-nom').value.trim(),legajo:$('#i-leg').value.trim(),delegacion:$('#i-del').value.trim()}),'Inspector agregado.')}
+function editInsp(id,k,v){run(()=>api('PUT',`/api/inspectores/${id}`,{[k]:v.trim()}),'Inspector actualizado.')}
+function delInsp(id){if(!confirm('¿Quitar este inspector?'))return;run(()=>api('DELETE',`/api/inspectores/${id}`))}
+function setAdmin(cod,uid){const i=insp(cod);run(()=>api('PUT',`/api/inspectores/${i.id}`,{adminId:+uid||0}),'Asignación actualizada.')}
+function addUser(){run(()=>api('POST','/api/usuarios',{usuario:$('#u-usr').value.trim(),nombre:$('#u-nom').value.trim(),clave:$('#u-pin').value.trim(),rol:$('#u-rol').value}),'Usuario creado. Deberá cambiar la contraseña al ingresar.')}
+function resetClave(id){const c=prompt('Contraseña provisoria para este usuario (deberá cambiarla al ingresar)','1234');if(!c)return;run(()=>api('PUT',`/api/usuarios/${id}/clave`,{clave:c}),'Contraseña restablecida.')}
+function delUser(id){if(!confirm('¿Eliminar este usuario?'))return;run(()=>api('DELETE',`/api/usuarios/${id}`))}
+$('#lg-pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('#lg-user').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+fetch('/api/state').then(r=>r.ok?entrar():null).catch(()=>{});
+</script>
+</body>
+</html>
